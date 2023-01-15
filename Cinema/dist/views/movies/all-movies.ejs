@@ -1,0 +1,41 @@
+<%- include('../includes/head.ejs') %>
+
+    <main>
+
+        <%- include('../includes/movies-header.ejs') %>
+        <% movies.forEach(movie => { %>
+            <div class="container bordered">
+                <h3><%= movie.name %>, <%= movie.premiered.getFullYear() %></h3>
+                <p> Genres: <%= movie.genres.join(', ') %></p>
+                <div class="movie-grid">
+                    <div class="movie-image">
+                        <img src="<%= movie.image %>" alt="<%= movie.name %>">
+                    </div>
+                    <div class="movie-subscription bordered">
+                        <p>Subscription Watched:</p>
+                    </div>
+                </div>
+                <div><button>Edit</button>  <button onclick="deleteMovie('<%= movie._id %>')">Delete</button>
+                   </div>
+
+            </div>
+            <% }) %>
+
+    </main>
+  <script>
+    function deleteMovie(id) {
+      fetch(`/movies/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then (res => {
+        console.log(res.status)
+        if (res.status === 200) {
+          window.location.href = '/movies'
+        }
+      })
+     
+    }
+  </script>
+</body>

@@ -1,56 +1,47 @@
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
-import connectDB from './configs/db';
-import getAllMovies from './BLL/moviesBLL';
-import getAllMembers from './BLL/membersBLL';
-import Movie from './models/movieModel'
-import {membersObject, moviesObject } from './interfaces/mongoose.gen';
-import Member from './models/membersModel';
-dotenv.config();
+import express, { Express, Request, Response, NextFunction } from "express";
+import dotenv from "dotenv";
+import connectDB from "./configs/db";
+import { initMoviesDB } from "./BLL/moviesBLL";
+import { initMembersDB } from "./BLL/membersBLL";
+import moviesRouter from "./routes/moviesRouter";
+import membersRouter from "./routes/membersRouter";
 
+dotenv.config();
 const app: Express = express();
 const port = process.env.PORT;
 
-
-async function start()
-{
-  try{
+async function start() {
+  try {
     //connect to DB
     await connectDB();
 
     //clear movies collection, get all the movies from the API and save them to the DB
-    await Movie.deleteMany({});
-    const movies = await getAllMovies();
-    movies.forEach(async (movie : moviesObject) => {
-        const mov = new Movie(movie);
-        await mov.save();
-      })
-    
+    await initMoviesDB();
+
     //clear members collection, get all the members from the API and save them to the DB
-    await Member.deleteMany({});
-    const members = await getAllMembers();
-    members.forEach(async (member : membersObject) => {
-      const mem = new Member(member);
-      await mem.save();
-    })
-  
+    await initMembersDB();
     //all good? start the server
     app.listen(port, () => {
       console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
     });
-  }
-  catch(err: any)
-  {
+  } catch (err: any) {
     throw new Error(err);
   }
 }
 
+app.use(express.json());
 
-
-
-app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server');
+app.get("/", (req: Request, res: Response) => {
+  console.log("Hello World");
+  res.send("Express + TypeScript Server");
 });
 
+app.use("/movies", moviesRouter);
+app.use("/members", membersRouter);
+
+//Error handling middleware
+app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+  res.status(500).json({ message: error.message });
+});
 
 start();

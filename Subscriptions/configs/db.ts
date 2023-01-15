@@ -1,8 +1,9 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+// dotenv.config();
 
-const connectDB =  () => {
-  return mongoose
-    .connect("mongodb+srv://talmosko:talM@cluster0.o2xi2bl.mongodb.net/subscriptionsDB")
+const connectDB = () => {
+  return mongoose.connect(process.env.MONGO_URI!);
 };
 
 export default connectDB;

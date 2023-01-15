@@ -1,0 +1,37 @@
+
+<%- include('../includes/head.ejs') %>
+
+<main>
+    <%- include('../includes/movies-header.ejs') %>
+    <div class="movie-form">
+        <form action="/movies" method="post">
+            <div>
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name">
+            </div>
+         
+            <div>
+                <label for="genres">Genres</label>
+                <input type="text" name="genres" id="genres">
+            </div>
+
+            <div>
+                <label for="image">Image Url</label>
+                <input type="text" name="image" id="image">
+            </div>
+
+            <div>
+                <label for="premiered">Premiered</label>
+                <input type="date" name="premiered" id="premiered">
+            </div>
+
+            <div>
+                <button type="submit">Add Movie</button>
+                <button onclick="location.href = '/movies';">Cancel</button>
+            </div>
+            
+        </form>
+        
+    </div>
+
+</main>
