@@ -14,11 +14,11 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:id", async (req, res, next) => {
+router.get("/:movieId", async (req, res, next) => {
   try {
-    const id = req.params.id;
-    const movie = await moviesBLL.getMovieById(id);
-    res.json(movie);
+    const movieId = req.params.movieId;
+    const movie = await moviesBLL.getMovieById(movieId);
+    res.status(200).json(movie);
   } catch (err) {
     return next(err);
   }
@@ -34,21 +34,24 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.put("/:id", async (req, res, next) => {
+router.put("/:movieId", async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const movieId = req.params.movieId;
     const movie = req.body;
-    await moviesBLL.updateMovie(id, movie);
-    res.json(movie);
+    console.log(movie);
+    console.log(movieId);
+    let ans = await moviesBLL.updateMovie(movieId, movie);
+    console.log(ans);
+    res.status(201).json({ message: "Movie Updated" });
   } catch (err) {
     return next(err);
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:movieId", async (req, res, next) => {
   try {
-    const id = req.params.id;
-    await moviesBLL.deleteMovie(id);
+    const movieId = req.params.movieId;
+    await moviesBLL.deleteMovie(movieId);
     res.status(200).json({ message: "Movie deleted" });
   } catch (err) {
     return next(err);

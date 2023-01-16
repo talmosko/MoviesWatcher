@@ -28,10 +28,11 @@ const moviesBLL = __importStar(require("../BLL/moviesBLL"));
 const router = (0, express_1.Router)();
 // Navigation
 router.get("/add-movie", moviesBLL.getAddMovie);
+router.get("/edit-movie/:movieId", moviesBLL.getEditMovie);
 // CRUD - Create, Read, Update, Delete
 router.get("/", moviesBLL.getAllMovies);
-router.get("/:id", moviesBLL.getMovieById);
+router.get("/:movieId", moviesBLL.getMovieById);
 router.post("/", moviesBLL.addMovie);
-router.put("/:id", moviesBLL.updateMovie);
-router.delete("/:id", moviesBLL.deleteMovie);
+router.put("/:movieId", moviesBLL.updateMovie);
+router.delete("/:movieId", moviesBLL.deleteMovie);
 exports.default = router;

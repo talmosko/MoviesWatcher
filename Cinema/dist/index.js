@@ -40,6 +40,7 @@ app.set("views", "views");
 app.use(express_1.default.static(path.join(__dirname, "public")));
 //Body Parser
 app.use(express_1.default.urlencoded({ extended: false }));
+app.use(express_1.default.json());
 // Routes
 app.get("/", (req, res) => {
     res.render("index", {

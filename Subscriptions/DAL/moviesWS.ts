@@ -5,6 +5,4 @@ const getAllMovies = async () => {
   return await movies.data;
 };
 
-export default getAllMovies;
-
-//function to add a movie to the database
+export { getAllMovies };

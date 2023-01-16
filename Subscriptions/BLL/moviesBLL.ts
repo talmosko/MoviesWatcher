@@ -1,9 +1,13 @@
-import getMovies from "../DAL/moviesWS";
-import { moviesObject } from "../interfaces/mongoose.gen";
+import * as moviesWS from "../DAL/moviesWS";
+import {
+  moviesDocument,
+  moviesObject,
+  moviesQueries,
+} from "../interfaces/mongoose.gen";
 import Movie from "../models/movieModel";
 
 const getAllMoviesFromAPI = async () => {
-  const movies = await getMovies();
+  const movies = await moviesWS.getAllMovies();
   return movies.map((movie: any) => {
     return {
       externalId: movie.id,
@@ -28,8 +32,8 @@ const getAllMovies = async () => {
   return await Movie.find({});
 };
 
-const getMovieById = async (id: string) => {
-  return await Movie.findById(id);
+const getMovieById = async (movieId: string) => {
+  return await Movie.findById(movieId);
 };
 
 const addMovie = async (movie: moviesObject) => {
@@ -37,12 +41,12 @@ const addMovie = async (movie: moviesObject) => {
   await mov.save();
 };
 
-const updateMovie = async (id: string, movie: moviesObject) => {
-  return await Movie.findByIdAndUpdate(id, movie);
+const updateMovie = async (movieId: string, movie: moviesObject) => {
+  return await Movie.findByIdAndUpdate(movieId, movie);
 };
 
-const deleteMovie = async (id: string) => {
-  return await Movie.findByIdAndDelete(id);
+const deleteMovie = async (movieId: string) => {
+  return await Movie.findByIdAndDelete(movieId);
 };
 
 export {

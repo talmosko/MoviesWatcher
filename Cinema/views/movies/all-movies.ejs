@@ -1,8 +1,6 @@
-<%- include('../includes/head.ejs') %>
 
-    <main>
-
-        <%- include('../includes/movies-header.ejs') %>
+<%- include('../includes/movies-header.ejs') %>
+        
         <% movies.forEach(movie => { %>
             <div class="container bordered">
                 <h3><%= movie.name %>, <%= movie.premiered.getFullYear() %></h3>
@@ -15,26 +13,16 @@
                         <p>Subscription Watched:</p>
                     </div>
                 </div>
-                <div><button>Edit</button>  <button onclick="deleteMovie('<%= movie._id %>')">Delete</button>
+                <div><button onclick="location.href = '/movies/edit-movie/<%= movie._id %>';">Edit</button>  <button onclick="deleteMovie('<%= movie._id %>')">Delete</button>
                    </div>
 
             </div>
             <% }) %>
 
     </main>
-  <script>
-    function deleteMovie(id) {
-      fetch(`/movies/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then (res => {
-        if (res.status === 200) {
-          window.location.href = '/movies'
-        }
-      })
-     
-    }
-  </script>
+
+
+    
+  <script src="/js/movies.js"></script>
+  
 </body>

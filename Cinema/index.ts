@@ -16,6 +16,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //Body Parser
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
 // Routes
 app.get("/", (req: Request, res: Response) => {
   res.render("index", {

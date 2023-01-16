@@ -1,6 +1,17 @@
-            
+ 
+<%- include('../includes/head.ejs') %>
+
+<main>
+
 <div class="container movies-header">
-    <h3>All Movies</h3>
-    <button onclick="location.href = '/movies/add-movie';">Add Movie</button>
+    <h3>Movies</h3>
+    <% if(!editing) { %>
+    <div>
+        <button onclick="location.href = '/movies';">All Movies</button>
+        <button onclick="location.href = '/movies/add-movie';">Add Movie</button>
+    </div>
+    <% } %>
 </div>
+
+
       

@@ -6,17 +6,18 @@ const router = Router();
 // Navigation
 
 router.get("/add-movie", moviesBLL.getAddMovie);
+router.get("/edit-movie/:movieId", moviesBLL.getEditMovie);
 
 // CRUD - Create, Read, Update, Delete
 
 router.get("/", moviesBLL.getAllMovies);
 
-router.get("/:id", moviesBLL.getMovieById);
+router.get("/:movieId", moviesBLL.getMovieById);
 
 router.post("/", moviesBLL.addMovie);
 
-router.put("/:id", moviesBLL.updateMovie);
+router.put("/:movieId", moviesBLL.updateMovie);
 
-router.delete("/:id", moviesBLL.deleteMovie);
+router.delete("/:movieId", moviesBLL.deleteMovie);
 
 export default router;

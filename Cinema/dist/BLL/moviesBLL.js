@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAddMovie = exports.deleteMovie = exports.updateMovie = exports.addMovie = exports.getMovieById = exports.getAllMovies = void 0;
+exports.getEditMovie = exports.getAddMovie = exports.deleteMovie = exports.updateMovie = exports.addMovie = exports.getMovieById = exports.getAllMovies = void 0;
 const moviesDAL = __importStar(require("../DAL/moviesWS"));
 /* CRUD - Create, Read, Update, Delete Operations */
 const getAllMovies = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -41,6 +41,8 @@ const getAllMovies = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         res.render("movies/all-movies", {
             pageTitle: "All Movies",
             movies: allMovies,
+            path: "/movies",
+            editing: false,
         });
     }
     catch (err) {
@@ -51,8 +53,8 @@ const getAllMovies = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
 exports.getAllMovies = getAllMovies;
 const getMovieById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let id = req.params.id;
-        let movie = yield moviesDAL.getMovieById(id);
+        let movieId = req.params.movieId;
+        let movie = yield moviesDAL.getMovieById(movieId);
         res.json(movie);
     }
     catch (err) {
@@ -76,10 +78,12 @@ const addMovie = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
 exports.addMovie = addMovie;
 const updateMovie = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let id = req.params.id;
+        let movieId = req.params.movieId;
         let movie = req.body;
-        let updatedMovie = yield moviesDAL.updateMovie(id, movie);
-        res.json(updatedMovie);
+        console.log(movie);
+        console.log(movieId);
+        let updatedMovie = yield moviesDAL.updateMovie(movieId, movie);
+        res.status(201).json(updatedMovie);
     }
     catch (err) {
         let error = new Error(err);
@@ -89,8 +93,8 @@ const updateMovie = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 exports.updateMovie = updateMovie;
 const deleteMovie = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let id = req.params.id;
-        yield moviesDAL.deleteMovie(id);
+        let movieId = req.params.movieId;
+        yield moviesDAL.deleteMovie(movieId);
         res.redirect(200, "/movies");
     }
     catch (err) {
@@ -102,6 +106,33 @@ exports.deleteMovie = deleteMovie;
 /* Navigation */
 //Add Movie Page
 const getAddMovie = (req, res, next) => {
-    res.render("movies/add-movie", { pageTitle: "Add Movie" });
+    res.render("movies/add-movie", {
+        pageTitle: "Add Movie",
+        movie: {},
+        path: "/movies/add-movie",
+        editing: false,
+    });
 };
 exports.getAddMovie = getAddMovie;
+//Edit Movie Page
+const getEditMovie = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const movieId = req.params.movieId;
+        const movie = yield moviesDAL.getMovieById(movieId);
+        const movieGenres = movie.genres.join(", ");
+        const moviePremiered = movie.premiered
+            ? movie.premiered.toISOString().split("T")[0]
+            : "";
+        res.render("movies/add-movie", {
+            pageTitle: `Edit ${movie.name}`,
+            movie: Object.assign(Object.assign({}, movie), { genres: movieGenres, premiered: moviePremiered }),
+            path: "/movies/edit-movie",
+            editing: true,
+        });
+    }
+    catch (err) {
+        let error = new Error(err);
+        next(error);
+    }
+});
+exports.getEditMovie = getEditMovie;
