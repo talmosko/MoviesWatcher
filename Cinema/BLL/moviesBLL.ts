@@ -1,6 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import * as moviesDAL from "../DAL/moviesWS";
-import { movieObject } from "../interfaces/subscriptionsTypes";
+import { MovieObject } from "../interfaces/subscriptionsTypes";
 
 /* CRUD - Create, Read, Update, Delete Operations */
 const getAllMovies: RequestHandler = async (req, res, next) => {
@@ -35,7 +35,7 @@ const addMovie: RequestHandler = async (req, res, next) => {
     let insertedMovie = {
       ...movie,
       genres: movie.genres.split(","),
-    } as movieObject;
+    } as MovieObject;
     await moviesDAL.addMovie(insertedMovie);
     res.redirect("/movies");
   } catch (err: any) {
@@ -72,7 +72,7 @@ const deleteMovie: RequestHandler = async (req, res, next) => {
 /* Navigation */
 
 //Add Movie Page
-const getAddMovie: RequestHandler = (req, res, next) => {
+const getAddMoviePage: RequestHandler = (req, res, next) => {
   res.render("movies/add-movie", {
     pageTitle: "Add Movie",
     movie: {},
@@ -83,7 +83,7 @@ const getAddMovie: RequestHandler = (req, res, next) => {
 
 //Edit Movie Page
 
-const getEditMovie: RequestHandler = async (req, res, next) => {
+const getEditMoviePage: RequestHandler = async (req, res, next) => {
   try {
     const movieId = req.params.movieId;
     const movie = await moviesDAL.getMovieById(movieId);
@@ -110,6 +110,6 @@ export {
   addMovie,
   updateMovie,
   deleteMovie,
-  getAddMovie,
-  getEditMovie,
+  getAddMoviePage,
+  getEditMoviePage,
 };

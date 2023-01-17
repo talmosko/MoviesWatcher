@@ -3,10 +3,12 @@ import * as moviesBLL from "../BLL/moviesBLL";
 
 const router = Router();
 
+//Endpoint localhost:3000/movies
+
 // Navigation
 
-router.get("/add-movie", moviesBLL.getAddMovie);
-router.get("/edit-movie/:movieId", moviesBLL.getEditMovie);
+router.get("/add-movie", moviesBLL.getAddMoviePage);
+router.get("/edit-movie/:movieId", moviesBLL.getEditMoviePage);
 
 // CRUD - Create, Read, Update, Delete
 

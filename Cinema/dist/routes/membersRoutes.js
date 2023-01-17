@@ -24,16 +24,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const moviesBLL = __importStar(require("../BLL/moviesBLL"));
+const membersBLL = __importStar(require("../BLL/membersBLL"));
 const router = (0, express_1.Router)();
-//Endpoint localhost:3000/movies
+//Endpoint localhost:3000/members
 // Navigation
-router.get("/add-movie", moviesBLL.getAddMoviePage);
-router.get("/edit-movie/:movieId", moviesBLL.getEditMoviePage);
+router.get("/add-member", membersBLL.getAddMemberPage);
+router.get("/edit-member/:memberId", membersBLL.getEditMemberPage);
 // CRUD - Create, Read, Update, Delete
-router.get("/", moviesBLL.getAllMovies);
-router.get("/:movieId", moviesBLL.getMovieById);
-router.post("/", moviesBLL.addMovie);
-router.put("/:movieId", moviesBLL.updateMovie);
-router.delete("/:movieId", moviesBLL.deleteMovie);
+router.get("/:memberId", membersBLL.getMemberById);
+router.post("/", membersBLL.addMember);
+router.put("/:memberId", membersBLL.updateMember);
+router.delete("/:memberId", membersBLL.deleteMember);
 exports.default = router;

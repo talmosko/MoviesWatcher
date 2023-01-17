@@ -40,8 +40,7 @@ router.put("/:movieId", async (req, res, next) => {
     const movie = req.body;
     console.log(movie);
     console.log(movieId);
-    let ans = await moviesBLL.updateMovie(movieId, movie);
-    console.log(ans);
+    await moviesBLL.updateMovie(movieId, movie);
     res.status(201).json({ message: "Movie Updated" });
   } catch (err) {
     return next(err);

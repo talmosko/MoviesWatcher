@@ -22,22 +22,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEditMovie = exports.getAddMovie = exports.deleteMovie = exports.updateMovie = exports.addMovie = exports.getMovieById = exports.getAllMovies = void 0;
+exports.getEditMoviePage = exports.getAddMoviePage = exports.deleteMovie = exports.updateMovie = exports.addMovie = exports.getMovieById = exports.getAllMovies = void 0;
 const moviesDAL = __importStar(require("../DAL/moviesWS"));
 /* CRUD - Create, Read, Update, Delete Operations */
-const getAllMovies = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllMovies = async (req, res, next) => {
     try {
-        let allMovies = yield moviesDAL.getMovies();
+        let allMovies = await moviesDAL.getMovies();
         res.render("movies/all-movies", {
             pageTitle: "All Movies",
             movies: allMovies,
@@ -49,63 +40,63 @@ const getAllMovies = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         let error = new Error(err);
         next(error);
     }
-});
+};
 exports.getAllMovies = getAllMovies;
-const getMovieById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const getMovieById = async (req, res, next) => {
     try {
         let movieId = req.params.movieId;
-        let movie = yield moviesDAL.getMovieById(movieId);
+        let movie = await moviesDAL.getMovieById(movieId);
         res.json(movie);
     }
     catch (err) {
         let error = new Error(err);
         next(error);
     }
-});
+};
 exports.getMovieById = getMovieById;
-const addMovie = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const addMovie = async (req, res, next) => {
     try {
         let movie = req.body;
         let insertedMovie = Object.assign(Object.assign({}, movie), { genres: movie.genres.split(",") });
-        yield moviesDAL.addMovie(insertedMovie);
+        await moviesDAL.addMovie(insertedMovie);
         res.redirect("/movies");
     }
     catch (err) {
         let error = new Error(err);
         next(error);
     }
-});
+};
 exports.addMovie = addMovie;
-const updateMovie = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const updateMovie = async (req, res, next) => {
     try {
         let movieId = req.params.movieId;
         let movie = req.body;
         console.log(movie);
         console.log(movieId);
-        let updatedMovie = yield moviesDAL.updateMovie(movieId, movie);
+        let updatedMovie = await moviesDAL.updateMovie(movieId, movie);
         res.status(201).json(updatedMovie);
     }
     catch (err) {
         let error = new Error(err);
         next(error);
     }
-});
+};
 exports.updateMovie = updateMovie;
-const deleteMovie = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteMovie = async (req, res, next) => {
     try {
         let movieId = req.params.movieId;
-        yield moviesDAL.deleteMovie(movieId);
+        await moviesDAL.deleteMovie(movieId);
         res.redirect(200, "/movies");
     }
     catch (err) {
         let error = new Error(err);
         next(error);
     }
-});
+};
 exports.deleteMovie = deleteMovie;
 /* Navigation */
 //Add Movie Page
-const getAddMovie = (req, res, next) => {
+const getAddMoviePage = (req, res, next) => {
     res.render("movies/add-movie", {
         pageTitle: "Add Movie",
         movie: {},
@@ -113,12 +104,12 @@ const getAddMovie = (req, res, next) => {
         editing: false,
     });
 };
-exports.getAddMovie = getAddMovie;
+exports.getAddMoviePage = getAddMoviePage;
 //Edit Movie Page
-const getEditMovie = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const getEditMoviePage = async (req, res, next) => {
     try {
         const movieId = req.params.movieId;
-        const movie = yield moviesDAL.getMovieById(movieId);
+        const movie = await moviesDAL.getMovieById(movieId);
         const movieGenres = movie.genres.join(", ");
         const moviePremiered = movie.premiered
             ? movie.premiered.toISOString().split("T")[0]
@@ -134,5 +125,5 @@ const getEditMovie = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         let error = new Error(err);
         next(error);
     }
-});
-exports.getEditMovie = getEditMovie;
+};
+exports.getEditMoviePage = getEditMoviePage;

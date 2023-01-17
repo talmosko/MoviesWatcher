@@ -2,6 +2,8 @@ import * as path from "path";
 import express, { Express, NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import moviesRouter from "./routes/moviesRoutes";
+import subscriptionsRoutes from "./routes/subscriptionsRoutes";
+import membersRoutes from "./routes/membersRoutes";
 dotenv.config();
 
 const app: Express = express();
@@ -27,12 +29,14 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/movies", moviesRouter);
-
-app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
-});
+app.use("/subscriptions", subscriptionsRoutes);
+app.use("/members", membersRoutes);
 
 //Error handling middleware
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: error.message });
+});
+
+app.listen(port, () => {
+  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });

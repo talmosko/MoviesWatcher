@@ -6,9 +6,7 @@ import { initMembersDB } from "./BLL/membersBLL";
 import moviesRouter from "./routes/moviesRouter";
 import membersRouter from "./routes/membersRouter";
 
-dotenv.config();
 const app: Express = express();
-const port = process.env.PORT;
 
 async function start() {
   try {
@@ -43,5 +41,8 @@ app.use("/members", membersRouter);
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: error.message });
 });
+
+dotenv.config();
+const port = process.env.PORT;
 
 start();

@@ -30,6 +30,8 @@ const path = __importStar(require("path"));
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const moviesRoutes_1 = __importDefault(require("./routes/moviesRoutes"));
+const subscriptionsRoutes_1 = __importDefault(require("./routes/subscriptionsRoutes"));
+const membersRoutes_1 = __importDefault(require("./routes/membersRoutes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT;
@@ -49,10 +51,12 @@ app.get("/", (req, res) => {
     });
 });
 app.use("/movies", moviesRoutes_1.default);
-app.listen(port, () => {
-    console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
-});
+app.use("/subscriptions", subscriptionsRoutes_1.default);
+app.use("/members", membersRoutes_1.default);
 //Error handling middleware
 app.use((error, req, res, next) => {
     res.status(500).json({ message: error.message });
+});
+app.listen(port, () => {
+    console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });

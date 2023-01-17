@@ -1,0 +1,21 @@
+
+<%- include('../includes/members-header.ejs') %>
+        
+        <% members.forEach(member => { %>
+            <div class="container bordered">
+                <h3><%= member.name %></h3>
+                <p> Email: <%= member.email %></p>
+                <p> City: <%= member.city %></p>
+                <div><button onclick="location.href = '/members/edit-member/<%= member._id %>';">Edit</button>  <button onclick="deleteMember('<%= member._id %>')">Delete</button>
+                   </div>
+
+            </div>
+            <% }) %>
+
+    </main>
+
+
+    
+  <script src="/js/members.js"></script>
+  
+</body>

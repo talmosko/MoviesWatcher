@@ -1,7 +1,7 @@
 //Types of the Subscriptions WS
 import { ObjectId } from "mongoose";
 
-export type memberObject = {
+export type MemberObject = {
   _id: ObjectId;
   externalId?: number;
   name?: string;
@@ -9,7 +9,7 @@ export type memberObject = {
   city?: string;
 };
 
-export type movieObject = {
+export type MovieObject = {
   _id: ObjectId;
   externalId?: number;
   name?: string;

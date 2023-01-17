@@ -1,10 +1,12 @@
 import axios from "axios";
-import { movieObject } from "../interfaces/subscriptionsTypes";
+import { MovieObject } from "../interfaces/subscriptionsTypes";
+import dotenv from "dotenv";
+dotenv.config();
 
 const address =
-  process.env.SUBSCRIPTIONS_API_URL || "http://localhost:8000/movies";
+  (process.env.SUBSCRIPTIONS_API_URL || "http://localhost:8000/") + "movies";
 
-const getMovies = async (): Promise<[movieObject]> => {
+const getMovies = async (): Promise<[MovieObject]> => {
   try {
     const response = await axios.get(address);
     if (response.status !== 200) {
@@ -21,13 +23,13 @@ const getMovies = async (): Promise<[movieObject]> => {
   }
 };
 
-const getMovieById = async (movieId: string): Promise<movieObject> => {
+const getMovieById = async (movieId: string): Promise<MovieObject> => {
   try {
     const response = await axios.get(address + "/" + movieId);
     if (response.status !== 200) {
       throw new Error("Movies not found");
     }
-    const resData: movieObject = (await response.data) as movieObject;
+    const resData: MovieObject = (await response.data) as MovieObject;
 
     //convert premiered to a date
     const premiered = resData.premiered
@@ -39,7 +41,7 @@ const getMovieById = async (movieId: string): Promise<movieObject> => {
   }
 };
 
-const addMovie = async (movie: movieObject) => {
+const addMovie = async (movie: MovieObject) => {
   try {
     const response = await axios.post(address, movie);
     if (response.status !== 201) {
@@ -52,7 +54,7 @@ const addMovie = async (movie: movieObject) => {
   }
 };
 
-const updateMovie = async (movieId: string, movie: movieObject) => {
+const updateMovie = async (movieId: string, movie: MovieObject) => {
   try {
     const response = await axios.put(address + "/" + movieId, movie);
     console.log(response.status);

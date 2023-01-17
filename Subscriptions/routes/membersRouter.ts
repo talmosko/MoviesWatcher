@@ -6,17 +6,17 @@ const router = Router();
 router.get("/", async (req, res, next) => {
   try {
     const members = await membersBLL.getAllMembers();
-    res.json(members);
+    res.status(200).json(members);
   } catch (err) {
     return next(err);
   }
 });
 
-router.get("/:id", async (req, res, next) => {
+router.get("/:memberId", async (req, res, next) => {
   try {
-    const id = req.params.id;
-    const member = await membersBLL.getMemberById(id);
-    res.json(member);
+    const memberId = req.params.memberId;
+    const member = await membersBLL.getMemberById(memberId);
+    res.status(200).json(member);
   } catch (err) {
     return next(err);
   }
@@ -26,28 +26,28 @@ router.post("/", async (req, res, next) => {
   try {
     const member = req.body;
     await membersBLL.addMember(member);
-    res.json(member);
+    res.status(201).json({ message: "Member added" });
   } catch (err) {
     return next(err);
   }
 });
 
-router.put("/:id", async (req, res, next) => {
+router.put("/:memberId", async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const memberId = req.params.memberId;
     const member = req.body;
-    await membersBLL.updateMember(id, member);
-    res.json(member);
+    await membersBLL.updateMember(memberId, member);
+    res.status(201).json({ message: "Member Updated" });
   } catch (err) {
     return next(err);
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:memberId", async (req, res, next) => {
   try {
-    const id = req.params.id;
-    await membersBLL.deleteMember(id);
-    res.json({ message: "Member deleted" });
+    const memberId = req.params.memberId;
+    await membersBLL.deleteMember(memberId);
+    res.status(200).json({ message: "Member deleted" });
   } catch (err) {
     return next(err);
   }

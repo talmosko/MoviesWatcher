@@ -9,7 +9,7 @@ const getAllMembersFromAPI = async () => {
       externalId: member.id,
       name: member.name,
       email: member.email,
-      city: member.city,
+      city: member.address.city,
     } as unknown as membersObject;
   });
 };
@@ -27,8 +27,8 @@ const getAllMembers = async () => {
   return await Member.find({});
 };
 
-const getMemberById = async (id: string) => {
-  return await Member.findById(id);
+const getMemberById = async (memberId: string) => {
+  return await Member.findById(memberId);
 };
 
 const addMember = async (member: membersObject) => {
@@ -36,12 +36,12 @@ const addMember = async (member: membersObject) => {
   await mem.save();
 };
 
-const updateMember = async (id: string, member: membersObject) => {
-  return await Member.findByIdAndUpdate(id, member);
+const updateMember = async (memberId: string, member: membersObject) => {
+  return await Member.findByIdAndUpdate(memberId, member);
 };
 
-const deleteMember = async (id: string) => {
-  return await Member.findByIdAndDelete(id);
+const deleteMember = async (memberId: string) => {
+  return await Member.findByIdAndDelete(memberId);
 };
 
 export {
