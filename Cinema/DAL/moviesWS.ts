@@ -6,7 +6,7 @@ dotenv.config();
 const address =
   (process.env.SUBSCRIPTIONS_API_URL || "http://localhost:8000/") + "movies";
 
-const getMovies = async (): Promise<[MovieObject]> => {
+const getMovies = async (): Promise<MovieObject[]> => {
   try {
     const response = await axios.get(address);
     if (response.status !== 200) {

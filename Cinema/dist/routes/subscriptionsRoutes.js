@@ -25,7 +25,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const membersBLL = __importStar(require("../BLL/membersBLL"));
+const subscriptionsBLL = __importStar(require("../BLL/subscriptionsBLL"));
 const router = (0, express_1.Router)();
 //Endpoint localhost:3000/subscriptions
 router.get("/", membersBLL.getAllMembers);
+router.get("/subscribe-form/:memberId", subscriptionsBLL.getSubscribeForm);
+router.post("/", subscriptionsBLL.postSubscription);
 exports.default = router;

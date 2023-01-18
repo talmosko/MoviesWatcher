@@ -10,6 +10,13 @@
     margin-bottom: 1rem;
 }
 
+.sub-container
+{
+    
+    margin: 0px 0px;
+    max-width: 35rem;
+}
+
 .container *
 {
     margin: 0px 0px;

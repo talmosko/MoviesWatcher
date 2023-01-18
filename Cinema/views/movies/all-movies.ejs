@@ -11,6 +11,12 @@
                     </div>
                     <div class="movie-subscription bordered">
                         <p>Subscription Watched:</p>
+                        <ul>
+                            <% movie.subscriptions.forEach(sub => { %>
+                                <!-- <li><%= sub.memberId.name %></li> -->
+                                <li> <a href="/members/<%= sub.memberId._id %>"><%= sub.memberId.name %></a>, <%= sub.movies[0].date.split("T")[0] %></li>
+                            <% }) %>
+                        </ul>
                     </div>
                 </div>
                 <div><button onclick="location.href = '/movies/edit-movie/<%= movie._id %>';">Edit</button>  <button onclick="deleteMovie('<%= movie._id %>')">Delete</button>

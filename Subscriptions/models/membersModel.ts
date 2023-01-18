@@ -1,13 +1,20 @@
 import mongoose from "mongoose";
-import { membersDocument, membersModel, membersSchema, membersObject } from "../interfaces/mongoose.gen";
+import {
+  MemberDocument,
+  MemberSchema,
+  MemberModel,
+} from "../interfaces/mongoose.gen";
 
-const memberSchema : membersSchema = new mongoose.Schema({
-    externalId: Number,
-    name : String,
-    email : String,
-    city : String
-})
+const memberSchema: MemberSchema = new mongoose.Schema({
+  externalId: Number,
+  name: String,
+  email: String,
+  city: String,
+});
 
-const Member: membersModel = mongoose.model<membersDocument, membersModel>("members", memberSchema);
+const Member: MemberModel = mongoose.model<MemberDocument, MemberModel>(
+  "Member",
+  memberSchema
+);
 
 export default Member;

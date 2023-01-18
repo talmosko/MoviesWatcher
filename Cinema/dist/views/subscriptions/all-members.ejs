@@ -2,13 +2,29 @@
 <%- include('../includes/members-header.ejs') %>
         
         <% members.forEach(member => { %>
-            <div class="container bordered">
+            <div class="member container bordered">
                 <h3><%= member.name %></h3>
                 <p> Email: <%= member.email %></p>
                 <p> City: <%= member.city %></p>
-                <div><button onclick="location.href = '/members/edit-member/<%= member._id %>';">Edit</button>  <button onclick="deleteMember('<%= member._id %>')">Delete</button>
-                   </div>
+                <div class="member_buttons">
+                    <button onclick="location.href = '/members/edit-member/<%= member._id %>';">Edit</button>  
+                    <button onclick="deleteMember('<%= member._id %>')">Delete</button>
+                </div>
+                <div class="member-subscriptions sub-container bordered">
+                    <h3>Movies Watched</h3>
+                    <button id="member_subscribe_button__<%= member._id %>" onclick="getSubscriptionForm('<%= member._id %>')">Subscribe to a new movie</button>
+                    <div id="member-subscribe-form"></div>
+                    <ul>
+                        <% member.subscriptions.forEach(subscription => { %>
+                            <% subscription.movies.forEach(movie => { %>
+                            <li> <a href="/movies/<%= movie.movieId._id %>"><%= movie.movieId.name %></a>, <%= movie.date.split("T")[0] %></li>
+                            <% }) %>
+                        <% }) %>
 
+                            
+                    </ul>
+                </div>
+                </div>
             </div>
             <% }) %>
 
@@ -17,5 +33,5 @@
 
     
   <script src="/js/members.js"></script>
-  
+  <script src="/js/subscriptions.js"></script>
 </body>

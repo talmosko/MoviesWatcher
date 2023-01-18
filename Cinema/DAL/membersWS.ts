@@ -6,13 +6,13 @@ dotenv.config();
 const address =
   (process.env.SUBSCRIPTIONS_API_URL || "http://localhost:8000/") + "members";
 
-const getMembers = async (): Promise<[MemberObject]> => {
+const getMembers = async (): Promise<MemberObject[]> => {
   try {
     const response = await axios.get(address);
     if (response.status !== 200) {
       throw new Error("Members not found");
     }
-    const members = await response.data;
+    const members = (await response.data) as MemberObject[];
 
     return members;
   } catch (err: any) {

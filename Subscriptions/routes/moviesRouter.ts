@@ -1,13 +1,12 @@
 import { Router } from "express";
-import { nextTick } from "process";
 import * as moviesBLL from "../BLL/moviesBLL";
-import { moviesObject } from "../interfaces/mongoose.gen";
+import { MovieObject } from "../interfaces/mongoose.gen";
 
 const router = Router();
 
 router.get("/", async (req, res, next) => {
   try {
-    const movies = await moviesBLL.getAllMovies();
+    let movies = await moviesBLL.getAllMovies();
     res.json(movies);
   } catch (err) {
     return next(err);
@@ -26,7 +25,7 @@ router.get("/:movieId", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const movie = req.body as moviesObject;
+    const movie = req.body as MovieObject;
     await moviesBLL.addMovie(movie);
     res.status(201).json({ message: "Movie added" });
   } catch (err) {
@@ -37,7 +36,7 @@ router.post("/", async (req, res, next) => {
 router.put("/:movieId", async (req, res, next) => {
   try {
     const movieId = req.params.movieId;
-    const movie = req.body;
+    const movie = req.body as MovieObject;
     console.log(movie);
     console.log(movieId);
     await moviesBLL.updateMovie(movieId, movie);

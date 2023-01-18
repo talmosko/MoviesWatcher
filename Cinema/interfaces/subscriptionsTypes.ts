@@ -7,6 +7,7 @@ export type MemberObject = {
   name?: string;
   email?: string;
   city?: string;
+  subscriptions?: SubscriptionObject[];
 };
 
 export type MovieObject = {
@@ -16,4 +17,11 @@ export type MovieObject = {
   genres: string[];
   image?: string;
   premiered?: Date;
+  subscriptions?: SubscriptionObject[];
+};
+
+export type SubscriptionObject = {
+  _id?: ObjectId;
+  memberId?: MemberObject;
+  movies?: [{ movieId: MovieObject; date: Date }];
 };

@@ -16,17 +16,17 @@
         <% } %> 
             <div>
                 <label for="name">Name</label>
-                <input type="text" name="name" id="name" value='<%= editing ? member.name : undefined %>'>
+                <input type="text" name="name" id="name" value='<%= editing ? member.name : undefined %>' required>
             </div>
          
             <div>
                 <label for="email">email</label>
-                <input type="email" name="email" id="email" value='<%= editing ? member.email : undefined %>'>
+                <input type="email" name="email" id="email" value='<%= editing ? member.email : undefined %>' required>
             </div>
 
             <div>
                 <label for="city">City</label>
-                <input type="text" name="city" id="city" value='<%= editing ? member.city : undefined %>'>
+                <input type="text" name="city" id="city" value='<%= editing ? member.city : undefined %>' required>
             </div>
            
             <% if(editing) { %>

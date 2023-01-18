@@ -25,10 +25,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getEditMemberPage = exports.getAddMemberPage = exports.deleteMember = exports.updateMember = exports.addMember = exports.getMemberById = exports.getAllMembers = void 0;
 const membersDAL = __importStar(require("../DAL/membersWS"));
+const subscriptionsDAL = __importStar(require("../DAL/subscriptionsWS"));
+/* Helper Functions */
+//gets member (without subscriptions) and all subscriptions, returns member with subscriptions
+const getSubscriptionsForMember = (member, allSubscriptions) => {
+    let memberSubscriptions = allSubscriptions.filter((subscription) => {
+        var _a;
+        return ((_a = subscription.memberId) === null || _a === void 0 ? void 0 : _a._id) === member._id;
+    });
+    return Object.assign(Object.assign({}, member), { subscriptions: memberSubscriptions });
+};
 /* CRUD - Create, Read, Update, Delete Operations */
 const getAllMembers = async (req, res, next) => {
     try {
+        //get all members
         let allMembers = await membersDAL.getMembers();
+        //get all subscriptions
+        let allSubscriptions = await subscriptionsDAL.getAllSubscriptions();
+        //for each member, match the subscriptions
+        allMembers = allMembers.map((member) => {
+            return getSubscriptionsForMember(member, allSubscriptions);
+        });
         res.render("subscriptions/all-members", {
             pageTitle: "All Members",
             members: allMembers,
@@ -46,7 +63,15 @@ const getMemberById = async (req, res, next) => {
     try {
         let memberId = req.params.memberId;
         let member = await membersDAL.getMemberById(memberId);
-        res.json(member);
+        //get all subscriptions for member
+        let allSubscriptions = await subscriptionsDAL.getSubscriptionsByMemberId(memberId);
+        member = getSubscriptionsForMember(member, allSubscriptions);
+        res.render("subscriptions/all-members", {
+            pageTitle: "All Members",
+            members: [member],
+            path: "/subscriptions",
+            editing: false,
+        });
     }
     catch (err) {
         let error = new Error(err);
@@ -70,8 +95,6 @@ const updateMember = async (req, res, next) => {
     try {
         let memberId = req.params.memberId;
         let member = req.body;
-        console.log(member);
-        console.log(memberId);
         let updatedMember = await membersDAL.updateMember(memberId, member);
         res.status(201).json(updatedMember);
     }

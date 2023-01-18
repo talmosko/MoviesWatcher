@@ -25,10 +25,30 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getEditMoviePage = exports.getAddMoviePage = exports.deleteMovie = exports.updateMovie = exports.addMovie = exports.getMovieById = exports.getAllMovies = void 0;
 const moviesDAL = __importStar(require("../DAL/moviesWS"));
+const subscriptionsDAL = __importStar(require("../DAL/subscriptionsWS"));
+/* Helper Functions */
+//gets movie (without subscriptions) and all subscriptions, returns movie with subscriptions
+const getSubscriptionsForMovie = (movie, allSubscriptions) => {
+    let movieSubscriptions = [];
+    allSubscriptions.forEach((subscription) => {
+        var _a;
+        (_a = subscription.movies) === null || _a === void 0 ? void 0 : _a.forEach((subMovie) => {
+            if (subMovie.movieId._id === movie._id) {
+                movieSubscriptions.push(Object.assign(Object.assign({}, subscription), { movies: [subMovie] }));
+            }
+        });
+    });
+    return Object.assign(Object.assign({}, movie), { subscriptions: movieSubscriptions });
+};
 /* CRUD - Create, Read, Update, Delete Operations */
 const getAllMovies = async (req, res, next) => {
     try {
         let allMovies = await moviesDAL.getMovies();
+        let allSubscriptions = await subscriptionsDAL.getAllSubscriptions();
+        //for each movie, match the subscriptions
+        allMovies = allMovies.map((movie) => {
+            return getSubscriptionsForMovie(movie, allSubscriptions);
+        });
         res.render("movies/all-movies", {
             pageTitle: "All Movies",
             movies: allMovies,
@@ -46,7 +66,14 @@ const getMovieById = async (req, res, next) => {
     try {
         let movieId = req.params.movieId;
         let movie = await moviesDAL.getMovieById(movieId);
-        res.json(movie);
+        let allSubscriptions = await subscriptionsDAL.getAllSubscriptions();
+        movie = getSubscriptionsForMovie(movie, allSubscriptions);
+        res.render("movies/all-movies", {
+            pageTitle: "All Movies",
+            movies: [movie],
+            path: "/movies",
+            editing: false,
+        });
     }
     catch (err) {
         let error = new Error(err);

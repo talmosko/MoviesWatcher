@@ -1,47 +1,85 @@
 import getMembers from "../DAL/membersWS";
-import { membersObject } from "../interfaces/mongoose.gen";
+import { MemberObject } from "../interfaces/mongoose.gen";
 import Member from "../models/membersModel";
+import Subscription from "../models/subscriptionsModel";
 
-const getAllMembersFromAPI = async () => {
-  const members = await getMembers();
-  return members.map((member: any) => {
-    return {
-      externalId: member.id,
-      name: member.name,
-      email: member.email,
-      city: member.address.city,
-    } as unknown as membersObject;
-  });
+const getAllMembersFromAPI = async (): Promise<MemberObject[]> => {
+  try {
+    const members = await getMembers();
+    return members.map((member: any) => {
+      return {
+        externalId: member.id,
+        name: member.name,
+        email: member.email,
+        city: member.address.city,
+      } as unknown as MemberObject;
+    });
+  } catch (err: any) {
+    throw new Error(err);
+  }
 };
 
-const initMembersDB = async () => {
-  await Member.deleteMany({});
-  const members = await getAllMembersFromAPI();
-  members.forEach(async (member: membersObject) => {
+const initMembersDB = async (): Promise<void> => {
+  try {
+    await Member.deleteMany({});
+    const members = await getAllMembersFromAPI();
+    members.forEach(async (member: MemberObject) => {
+      const mem = new Member(member);
+      await mem.save();
+    });
+  } catch (err: any) {
+    throw new Error(err);
+  }
+};
+
+const getAllMembers = async (): Promise<MemberObject[]> => {
+  try {
+    return await Member.find({});
+  } catch (err: any) {
+    throw new Error(err);
+  }
+};
+
+const getMemberById = async (
+  memberId: string
+): Promise<MemberObject | null> => {
+  try {
+    return await Member.findById(memberId);
+  } catch (err: any) {
+    throw new Error(err);
+  }
+};
+
+const addMember = async (member: MemberObject): Promise<void> => {
+  try {
     const mem = new Member(member);
     await mem.save();
-  });
+  } catch (err: any) {
+    throw new Error(err);
+  }
 };
 
-const getAllMembers = async () => {
-  return await Member.find({});
+const updateMember = async (
+  memberId: string,
+  member: MemberObject
+): Promise<MemberObject | null> => {
+  try {
+    return await Member.findByIdAndUpdate(memberId, member);
+  } catch (err: any) {
+    throw new Error(err);
+  }
 };
 
-const getMemberById = async (memberId: string) => {
-  return await Member.findById(memberId);
-};
+const deleteMember = async (memberId: string): Promise<MemberObject | null> => {
+  try {
+    //Delete subscriptions of member
+    await Subscription.deleteMany({ memberId: memberId });
 
-const addMember = async (member: membersObject) => {
-  const mem = new Member(member);
-  await mem.save();
-};
-
-const updateMember = async (memberId: string, member: membersObject) => {
-  return await Member.findByIdAndUpdate(memberId, member);
-};
-
-const deleteMember = async (memberId: string) => {
-  return await Member.findByIdAndDelete(memberId);
+    //Delete member
+    return await Member.findByIdAndDelete(memberId);
+  } catch (err: any) {
+    throw new Error(err);
+  }
 };
 
 export {

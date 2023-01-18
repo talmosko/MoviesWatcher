@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as membersBLL from "../BLL/membersBLL";
+import { MemberObject } from "../interfaces/mongoose.gen";
 
 const router = Router();
 
@@ -24,7 +25,7 @@ router.get("/:memberId", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const member = req.body;
+    const member = req.body as MemberObject;
     await membersBLL.addMember(member);
     res.status(201).json({ message: "Member added" });
   } catch (err) {
@@ -35,7 +36,7 @@ router.post("/", async (req, res, next) => {
 router.put("/:memberId", async (req, res, next) => {
   try {
     const memberId = req.params.memberId;
-    const member = req.body;
+    const member = req.body as MemberObject;
     await membersBLL.updateMember(memberId, member);
     res.status(201).json({ message: "Member Updated" });
   } catch (err) {

@@ -1,11 +1,41 @@
 import { RequestHandler } from "express";
 import * as membersDAL from "../DAL/membersWS";
-import { MemberObject } from "../interfaces/subscriptionsTypes";
+import * as subscriptionsDAL from "../DAL/subscriptionsWS";
+import { ObjectId } from "mongoose";
+
+import {
+  MemberObject,
+  SubscriptionObject,
+} from "../interfaces/subscriptionsTypes";
+
+/* Helper Functions */
+//gets member (without subscriptions) and all subscriptions, returns member with subscriptions
+const getSubscriptionsForMember = (
+  member: MemberObject,
+  allSubscriptions: SubscriptionObject[]
+): MemberObject => {
+  let memberSubscriptions = allSubscriptions.filter((subscription) => {
+    return subscription.memberId?._id === member._id;
+  });
+
+  return { ...member, subscriptions: memberSubscriptions } as MemberObject;
+};
 
 /* CRUD - Create, Read, Update, Delete Operations */
 const getAllMembers: RequestHandler = async (req, res, next) => {
   try {
+    //get all members
+
     let allMembers = await membersDAL.getMembers();
+
+    //get all subscriptions
+    let allSubscriptions = await subscriptionsDAL.getAllSubscriptions();
+
+    //for each member, match the subscriptions
+    allMembers = allMembers.map((member) => {
+      return getSubscriptionsForMember(member, allSubscriptions);
+    });
+
     res.render("subscriptions/all-members", {
       pageTitle: "All Members",
       members: allMembers,
@@ -22,7 +52,20 @@ const getMemberById: RequestHandler = async (req, res, next) => {
   try {
     let memberId = req.params.memberId;
     let member = await membersDAL.getMemberById(memberId);
-    res.json(member);
+
+    //get all subscriptions for member
+    let allSubscriptions = await subscriptionsDAL.getSubscriptionsByMemberId(
+      memberId
+    );
+
+    member = getSubscriptionsForMember(member, allSubscriptions);
+
+    res.render("subscriptions/all-members", {
+      pageTitle: "All Members",
+      members: [member],
+      path: "/subscriptions",
+      editing: false,
+    });
   } catch (err: any) {
     let error = new Error(err);
     next(error);
@@ -44,8 +87,6 @@ const updateMember: RequestHandler = async (req, res, next) => {
   try {
     let memberId = req.params.memberId;
     let member = req.body;
-    console.log(member);
-    console.log(memberId);
     let updatedMember = await membersDAL.updateMember(memberId, member);
     res.status(201).json(updatedMember);
   } catch (err: any) {

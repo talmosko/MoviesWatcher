@@ -8,81 +8,77 @@
 import mongoose from "mongoose";
 
 /**
- * Lean version of membersDocument
+ * Lean version of MemberDocument
  *
- * This has all Mongoose getters & functions removed. This type will be returned from `membersDocument.toObject()`. To avoid conflicts with model names, use the type alias `membersObject`.
+ * This has all Mongoose getters & functions removed. This type will be returned from `MemberDocument.toObject()`. To avoid conflicts with model names, use the type alias `MemberObject`.
  * ```
- * const membersObject = members.toObject();
+ * const memberObject = member.toObject();
  * ```
  */
-export type members = {
-  _id: mongoose.Types.ObjectId;
+export type Member = {
   externalId?: number;
   name?: string;
   email?: string;
   city?: string;
+  _id: mongoose.Types.ObjectId;
 };
 
 /**
- * Lean version of membersDocument (type alias of `members`)
+ * Lean version of MemberDocument (type alias of `Member`)
  *
  * Use this type alias to avoid conflicts with model names:
  * ```
- * import { members } from "../models"
- * import { membersObject } from "../interfaces/mongoose.gen.ts"
+ * import { Member } from "../models"
+ * import { MemberObject } from "../interfaces/mongoose.gen.ts"
  *
- * const membersObject: membersObject = members.toObject();
+ * const memberObject: MemberObject = member.toObject();
  * ```
  */
-export type membersObject = members;
+export type MemberObject = Member;
 
 /**
  * Mongoose Query type
  *
  * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
  */
-export type membersQuery = mongoose.Query<
-  any,
-  membersDocument,
-  membersQueries
-> &
-  membersQueries;
+export type MemberQuery = mongoose.Query<any, MemberDocument, MemberQueries> &
+  MemberQueries;
 
 /**
  * Mongoose Query helper types
  *
- * This type represents `membersSchema.query`. For most use cases, you should not need to use this type explicitly.
+ * This type represents `MemberSchema.query`. For most use cases, you should not need to use this type explicitly.
  */
-export type membersQueries = {};
+export type MemberQueries = {};
 
-export type membersMethods = {};
+export type MemberMethods = {};
 
-export type membersStatics = {};
+export type MemberStatics = {};
 
 /**
  * Mongoose Model type
  *
  * Pass this type to the Mongoose Model constructor:
  * ```
- * const members = mongoose.model<membersDocument, membersModel>("members", membersSchema);
+ * const Member = mongoose.model<MemberDocument, MemberModel>("Member", MemberSchema);
  * ```
  */
-export type membersModel = mongoose.Model<membersDocument, membersQueries> &
-  membersStatics;
+export type MemberModel = mongoose.Model<MemberDocument, MemberQueries> &
+  MemberStatics;
 
 /**
  * Mongoose Schema type
  *
- * Assign this type to new members schema instances:
+ * Assign this type to new Member schema instances:
  * ```
- * const membersSchema: membersSchema = new mongoose.Schema({ ... })
+ * const MemberSchema: MemberSchema = new mongoose.Schema({ ... })
  * ```
  */
-export type membersSchema = mongoose.Schema<
-  membersDocument,
-  membersModel,
-  membersMethods,
-  membersQueries
+export type MemberSchema = mongoose.Schema<
+  MemberDocument,
+  MemberModel,
+  MemberMethods,
+  MemberQueries
 >;
 
 /**
@@ -90,91 +86,94 @@ export type membersSchema = mongoose.Schema<
  *
  * Pass this type to the Mongoose Model constructor:
  * ```
- * const members = mongoose.model<membersDocument, membersModel>("members", membersSchema);
+ * const Member = mongoose.model<MemberDocument, MemberModel>("Member", MemberSchema);
  * ```
  */
-export type membersDocument = mongoose.Document<{}, membersQueries> &
-  membersMethods & {
-    _id: mongoose.Types.ObjectId;
+export type MemberDocument = mongoose.Document<
+  mongoose.Types.ObjectId,
+  MemberQueries
+> &
+  MemberMethods & {
     externalId?: number;
     name?: string;
     email?: string;
     city?: string;
+    _id: mongoose.Types.ObjectId;
   };
 
 /**
- * Lean version of moviesDocument
+ * Lean version of MovieDocument
  *
- * This has all Mongoose getters & functions removed. This type will be returned from `moviesDocument.toObject()`. To avoid conflicts with model names, use the type alias `moviesObject`.
+ * This has all Mongoose getters & functions removed. This type will be returned from `MovieDocument.toObject()`. To avoid conflicts with model names, use the type alias `MovieObject`.
  * ```
- * const moviesObject = movies.toObject();
+ * const movieObject = movie.toObject();
  * ```
  */
-export type movies = {
-  _id: mongoose.Types.ObjectId;
+export type Movie = {
   externalId?: number;
   name?: string;
   genres: string[];
   image?: string;
   premiered?: Date;
+  _id: mongoose.Types.ObjectId;
 };
 
 /**
- * Lean version of moviesDocument (type alias of `movies`)
+ * Lean version of MovieDocument (type alias of `Movie`)
  *
  * Use this type alias to avoid conflicts with model names:
  * ```
- * import { movies } from "../models"
- * import { moviesObject } from "../interfaces/mongoose.gen.ts"
+ * import { Movie } from "../models"
+ * import { MovieObject } from "../interfaces/mongoose.gen.ts"
  *
- * const moviesObject: moviesObject = movies.toObject();
+ * const movieObject: MovieObject = movie.toObject();
  * ```
  */
-export type moviesObject = movies;
+export type MovieObject = Movie;
 
 /**
  * Mongoose Query type
  *
  * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
  */
-export type moviesQuery = mongoose.Query<any, moviesDocument, moviesQueries> &
-  moviesQueries;
+export type MovieQuery = mongoose.Query<any, MovieDocument, MovieQueries> &
+  MovieQueries;
 
 /**
  * Mongoose Query helper types
  *
- * This type represents `moviesSchema.query`. For most use cases, you should not need to use this type explicitly.
+ * This type represents `MovieSchema.query`. For most use cases, you should not need to use this type explicitly.
  */
-export type moviesQueries = {};
+export type MovieQueries = {};
 
-export type moviesMethods = {};
+export type MovieMethods = {};
 
-export type moviesStatics = {};
+export type MovieStatics = {};
 
 /**
  * Mongoose Model type
  *
  * Pass this type to the Mongoose Model constructor:
  * ```
- * const movies = mongoose.model<moviesDocument, moviesModel>("movies", moviesSchema);
+ * const Movie = mongoose.model<MovieDocument, MovieModel>("Movie", MovieSchema);
  * ```
  */
-export type moviesModel = mongoose.Model<moviesDocument, moviesQueries> &
-  moviesStatics;
+export type MovieModel = mongoose.Model<MovieDocument, MovieQueries> &
+  MovieStatics;
 
 /**
  * Mongoose Schema type
  *
- * Assign this type to new movies schema instances:
+ * Assign this type to new Movie schema instances:
  * ```
- * const moviesSchema: moviesSchema = new mongoose.Schema({ ... })
+ * const MovieSchema: MovieSchema = new mongoose.Schema({ ... })
  * ```
  */
-export type moviesSchema = mongoose.Schema<
-  moviesDocument,
-  moviesModel,
-  moviesMethods,
-  moviesQueries
+export type MovieSchema = mongoose.Schema<
+  MovieDocument,
+  MovieModel,
+  MovieMethods,
+  MovieQueries
 >;
 
 /**
@@ -182,17 +181,142 @@ export type moviesSchema = mongoose.Schema<
  *
  * Pass this type to the Mongoose Model constructor:
  * ```
- * const movies = mongoose.model<moviesDocument, moviesModel>("movies", moviesSchema);
+ * const Movie = mongoose.model<MovieDocument, MovieModel>("Movie", MovieSchema);
  * ```
  */
-export type moviesDocument = mongoose.Document<{}, moviesQueries> &
-  moviesMethods & {
-    _id: mongoose.Types.ObjectId;
+export type MovieDocument = mongoose.Document<
+  mongoose.Types.ObjectId,
+  MovieQueries
+> &
+  MovieMethods & {
     externalId?: number;
     name?: string;
     genres: mongoose.Types.Array<string>;
     image?: string;
     premiered?: Date;
+    _id: mongoose.Types.ObjectId;
+  };
+
+/**
+ * Lean version of SubscriptionMovieDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `SubscriptionDocument.toObject()`.
+ * ```
+ * const subscriptionObject = subscription.toObject();
+ * ```
+ */
+export type SubscriptionMovie = {
+  movieId?: Movie["_id"] | Movie;
+  date?: Date;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
+ * Lean version of SubscriptionDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `SubscriptionDocument.toObject()`. To avoid conflicts with model names, use the type alias `SubscriptionObject`.
+ * ```
+ * const subscriptionObject = subscription.toObject();
+ * ```
+ */
+export type Subscription = {
+  memberId?: Member["_id"] | Member;
+  movies: SubscriptionMovie[];
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
+ * Lean version of SubscriptionDocument (type alias of `Subscription`)
+ *
+ * Use this type alias to avoid conflicts with model names:
+ * ```
+ * import { Subscription } from "../models"
+ * import { SubscriptionObject } from "../interfaces/mongoose.gen.ts"
+ *
+ * const subscriptionObject: SubscriptionObject = subscription.toObject();
+ * ```
+ */
+export type SubscriptionObject = Subscription;
+
+/**
+ * Mongoose Query type
+ *
+ * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
+ */
+export type SubscriptionQuery = mongoose.Query<
+  any,
+  SubscriptionDocument,
+  SubscriptionQueries
+> &
+  SubscriptionQueries;
+
+/**
+ * Mongoose Query helper types
+ *
+ * This type represents `SubscriptionSchema.query`. For most use cases, you should not need to use this type explicitly.
+ */
+export type SubscriptionQueries = {};
+
+export type SubscriptionMethods = {};
+
+export type SubscriptionStatics = {};
+
+/**
+ * Mongoose Model type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const Subscription = mongoose.model<SubscriptionDocument, SubscriptionModel>("Subscription", SubscriptionSchema);
+ * ```
+ */
+export type SubscriptionModel = mongoose.Model<
+  SubscriptionDocument,
+  SubscriptionQueries
+> &
+  SubscriptionStatics;
+
+/**
+ * Mongoose Schema type
+ *
+ * Assign this type to new Subscription schema instances:
+ * ```
+ * const SubscriptionSchema: SubscriptionSchema = new mongoose.Schema({ ... })
+ * ```
+ */
+export type SubscriptionSchema = mongoose.Schema<
+  SubscriptionDocument,
+  SubscriptionModel,
+  SubscriptionMethods,
+  SubscriptionQueries
+>;
+
+/**
+ * Mongoose Subdocument type
+ *
+ * Type of `SubscriptionDocument["movies"]` element.
+ */
+export type SubscriptionMovieDocument = mongoose.Types.Subdocument & {
+  movieId?: MovieDocument["_id"] | MovieDocument;
+  date?: Date;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
+ * Mongoose Document type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const Subscription = mongoose.model<SubscriptionDocument, SubscriptionModel>("Subscription", SubscriptionSchema);
+ * ```
+ */
+export type SubscriptionDocument = mongoose.Document<
+  mongoose.Types.ObjectId,
+  SubscriptionQueries
+> &
+  SubscriptionMethods & {
+    memberId?: MemberDocument["_id"] | MemberDocument;
+    movies: mongoose.Types.DocumentArray<SubscriptionMovieDocument>;
+    _id: mongoose.Types.ObjectId;
   };
 
 /**

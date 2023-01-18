@@ -14,7 +14,7 @@ const getMembers = async () => {
         if (response.status !== 200) {
             throw new Error("Members not found");
         }
-        const members = await response.data;
+        const members = (await response.data);
         return members;
     }
     catch (err) {

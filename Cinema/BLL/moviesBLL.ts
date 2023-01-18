@@ -1,11 +1,42 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import * as moviesDAL from "../DAL/moviesWS";
-import { MovieObject } from "../interfaces/subscriptionsTypes";
+import * as memberDAL from "../DAL/membersWS";
+import * as subscriptionsDAL from "../DAL/subscriptionsWS";
+import {
+  MovieObject,
+  SubscriptionObject,
+} from "../interfaces/subscriptionsTypes";
+
+/* Helper Functions */
+//gets movie (without subscriptions) and all subscriptions, returns movie with subscriptions
+const getSubscriptionsForMovie = (
+  movie: MovieObject,
+  allSubscriptions: SubscriptionObject[]
+): MovieObject => {
+  let movieSubscriptions: SubscriptionObject[] = [];
+  allSubscriptions.forEach((subscription) => {
+    subscription.movies?.forEach((subMovie) => {
+      if (subMovie.movieId._id === movie._id) {
+        movieSubscriptions.push({ ...subscription, movies: [subMovie] });
+      }
+    });
+  });
+  return { ...movie, subscriptions: movieSubscriptions };
+};
 
 /* CRUD - Create, Read, Update, Delete Operations */
+
 const getAllMovies: RequestHandler = async (req, res, next) => {
   try {
     let allMovies = await moviesDAL.getMovies();
+    let allSubscriptions = await subscriptionsDAL.getAllSubscriptions();
+
+    //for each movie, match the subscriptions
+
+    allMovies = allMovies.map((movie) => {
+      return getSubscriptionsForMovie(movie, allSubscriptions);
+    });
+
     res.render("movies/all-movies", {
       pageTitle: "All Movies",
       movies: allMovies,
@@ -22,7 +53,16 @@ const getMovieById: RequestHandler = async (req, res, next) => {
   try {
     let movieId = req.params.movieId;
     let movie = await moviesDAL.getMovieById(movieId);
-    res.json(movie);
+
+    let allSubscriptions = await subscriptionsDAL.getAllSubscriptions();
+    movie = getSubscriptionsForMovie(movie, allSubscriptions);
+
+    res.render("movies/all-movies", {
+      pageTitle: "All Movies",
+      movies: [movie],
+      path: "/movies",
+      editing: false,
+    });
   } catch (err: any) {
     let error = new Error(err);
     next(error);

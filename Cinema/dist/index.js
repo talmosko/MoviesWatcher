@@ -55,6 +55,7 @@ app.use("/subscriptions", subscriptionsRoutes_1.default);
 app.use("/members", membersRoutes_1.default);
 //Error handling middleware
 app.use((error, req, res, next) => {
+    console.log(error);
     res.status(500).json({ message: error.message });
 });
 app.listen(port, () => {

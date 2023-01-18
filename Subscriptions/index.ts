@@ -3,9 +3,10 @@ import dotenv from "dotenv";
 import connectDB from "./configs/db";
 import { initMoviesDB } from "./BLL/moviesBLL";
 import { initMembersDB } from "./BLL/membersBLL";
+import { initSubscriptionsDB } from "./BLL/subscriptionsBLL";
 import moviesRouter from "./routes/moviesRouter";
 import membersRouter from "./routes/membersRouter";
-
+import subscriptionsRouter from "./routes/subscriptionsRouter";
 const app: Express = express();
 
 async function start() {
@@ -14,10 +15,14 @@ async function start() {
     await connectDB();
 
     //clear movies collection, get all the movies from the API and save them to the DB
-    await initMoviesDB();
+    // await initMoviesDB();
 
     //clear members collection, get all the members from the API and save them to the DB
-    await initMembersDB();
+    // await initMembersDB();
+
+    //clear subs
+    // await initSubscriptionsDB();
+
     //all good? start the server
     app.listen(port, () => {
       console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
@@ -36,9 +41,11 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/movies", moviesRouter);
 app.use("/members", membersRouter);
+app.use("/subscriptions", subscriptionsRouter);
 
 //Error handling middleware
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+  console.log(error);
   res.status(500).json({ message: error.message });
 });
 
