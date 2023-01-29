@@ -1,52 +1,53 @@
 import { Router } from "express";
-import * as membersBLL from "../BLL/membersBLL";
+import * as usersBLL from "../BLL/usersBLL";
 import * as authMiddlewares from "../middlewares/authMiddlewares";
 const router = Router();
 
-//Endpoint localhost:3000/members
-
-// Navigation
-
+/* Pages */
 router.get(
-  "/add-member",
+  "/add-user",
   authMiddlewares.jwtMiddleware,
   authMiddlewares.isAuth,
-  membersBLL.getAddMemberPage
+  usersBLL.getAddUserPage
 );
 router.get(
-  "/edit-member/:memberId",
+  "/edit-user/:userId",
   authMiddlewares.jwtMiddleware,
   authMiddlewares.isAuth,
-  membersBLL.getEditMemberPage
+  usersBLL.getEditUserPage
 );
 
-// CRUD - Create, Read, Update, Delete
+/* CRUD */
+
 router.get(
-  "/:memberId",
+  "/",
   authMiddlewares.jwtMiddleware,
   authMiddlewares.isAuth,
-  membersBLL.getMemberById
+  usersBLL.getUsers
 );
-
+router.get(
+  "/:userId",
+  authMiddlewares.jwtMiddleware,
+  authMiddlewares.isAuth,
+  usersBLL.getUser
+);
 router.post(
   "/",
   authMiddlewares.jwtMiddleware,
   authMiddlewares.isAuth,
-  membersBLL.addMember
+  usersBLL.postUser
 );
-
-router.put(
-  "/:memberId",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
-  membersBLL.updateMember
-);
-
 router.delete(
-  "/:memberId",
+  "/:userId",
   authMiddlewares.jwtMiddleware,
   authMiddlewares.isAuth,
-  membersBLL.deleteMember
+  usersBLL.deleteUser
+);
+router.put(
+  "/:userId",
+  authMiddlewares.jwtMiddleware,
+  authMiddlewares.isAuth,
+  usersBLL.putUser
 );
 
 export default router;

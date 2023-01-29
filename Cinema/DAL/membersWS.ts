@@ -1,5 +1,5 @@
 import axios from "axios";
-import { MemberObject } from "../interfaces/subscriptionsTypes";
+import { MemberObject } from "../types/subscriptionsTypes";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -16,7 +16,7 @@ const getMembers = async (): Promise<MemberObject[]> => {
 
     return members;
   } catch (err: any) {
-    throw new Error(err);
+    return [];
   }
 };
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SubscriptionObject } from "../interfaces/subscriptionsTypes";
+import { SubscriptionObject } from "../types/subscriptionsTypes";
 import dotenv from "dotenv";
 import { ObjectId } from "mongoose";
 dotenv.config();
@@ -43,7 +43,7 @@ const getAllSubscriptions = async (): Promise<SubscriptionObject[]> => {
     const resData = (await response.data) as SubscriptionObject[];
     return resData;
   } catch (error: any) {
-    throw new Error(error);
+    return [];
   }
 };
 

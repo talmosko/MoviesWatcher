@@ -1,5 +1,5 @@
 import axios from "axios";
-import { MovieObject } from "../interfaces/subscriptionsTypes";
+import { MovieObject } from "../types/subscriptionsTypes";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -19,7 +19,7 @@ const getMovies = async (): Promise<MovieObject[]> => {
       return { ...movie, premiered: new Date(movie.premiered) };
     });
   } catch (err: any) {
-    throw new Error(err);
+    return [];
   }
 };
 

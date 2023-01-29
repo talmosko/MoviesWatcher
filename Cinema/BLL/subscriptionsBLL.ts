@@ -1,11 +1,21 @@
 import { RequestHandler } from "express";
 import * as moviesWS from "../DAL/moviesWS";
-import { SubscriptionObject } from "../interfaces/subscriptionsTypes";
+import {
+  RequestWithUserPermissions,
+  SubscriptionObject,
+  UserPermissions,
+} from "../types/subscriptionsTypes";
 import * as subscriptionWS from "../DAL/subscriptionsWS";
 import { ObjectId, Schema } from "mongoose";
 
 const getSubscribeForm: RequestHandler = async (req, res, next) => {
   try {
+    //check 'Create Subscriptions' permission
+    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
+      .permissions;
+    if (!userPermissions.includes(UserPermissions.CreateSubscriptions)) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     //gets all movies
     const memberId = req.params.memberId;
     const movies = await moviesWS.getMovies();
@@ -40,6 +50,12 @@ const getSubscribeForm: RequestHandler = async (req, res, next) => {
 
 const postSubscription: RequestHandler = async (req, res, next) => {
   try {
+    //check 'Create Subscriptions' permission
+    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
+      .permissions;
+    if (!userPermissions.includes(UserPermissions.CreateSubscriptions)) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     const subscription: SubscriptionObject = req.body as SubscriptionObject;
     await subscriptionWS.postSubscription(subscription);
     res.redirect("/subscriptions");

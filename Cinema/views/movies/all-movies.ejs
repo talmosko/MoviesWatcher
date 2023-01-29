@@ -1,6 +1,6 @@
 
 <%- include('../includes/movies-header.ejs') %>
-        
+<% if(movies && movies.length > 0) {%>
         <% movies.forEach(movie => { %>
             <div class="container bordered">
                 <h3><%= movie.name %>, <%= movie.premiered.getFullYear() %></h3>
@@ -25,10 +25,14 @@
             </div>
             <% }) %>
 
+<% }else {%>
+    <h3>No movies to display</h3>
+<% } %>
+
+
     </main>
 
 
     
   <script src="/js/movies.js"></script>
-  
-</body>
+<%- include('../includes/end.ejs') %>

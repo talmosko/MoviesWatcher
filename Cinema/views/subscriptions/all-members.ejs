@@ -1,6 +1,6 @@
 
 <%- include('../includes/members-header.ejs') %>
-        
+<% if(members && members.length > 0) {%>
         <% members.forEach(member => { %>
             <div class="member container bordered">
                 <h3><%= member.name %></h3>
@@ -30,8 +30,11 @@
 
     </main>
 
-
+<% }else {%>
+    <h3>No members to display</h3>
+<% } %>
+    
     
   <script src="/js/members.js"></script>
   <script src="/js/subscriptions.js"></script>
-</body>
+<%- include('../includes/end.ejs') %>

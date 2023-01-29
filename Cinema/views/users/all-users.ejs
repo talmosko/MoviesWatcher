@@ -1,0 +1,26 @@
+
+<%- include('../includes/users-header.ejs') %>
+<% if(users && users.length > 0) {%>     
+    <% users.forEach(user => { %>
+        <div class="user container bordered">
+            <h3><%= user.fullName %></h3>
+            <p> Username: <%= user.userName %></p>
+            <p> Session Time Out (Mins): <%= user.sessionTimeout %></p>
+            <p> Created Data: <%= user.createdAt %></p>
+            <p> Permissions: <%= user.permissions %></p>
+
+            <div class="user_buttons">
+                <button onclick="location.href = '/users/edit-user/<%= user._id %>';">Edit</button>  
+                <button onclick="deleteUser('<%= user._id %>')">Delete</button>
+            </div>
+
+        </div>
+    <% }) %>
+<% }else {%>
+    <h3>No users to display</h3>
+<% } %>
+    
+</main>
+
+<script src="/js/users.js"></script>
+<%- include('../includes/end.ejs') %>

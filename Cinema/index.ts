@@ -4,10 +4,14 @@ import dotenv from "dotenv";
 import moviesRouter from "./routes/moviesRoutes";
 import subscriptionsRoutes from "./routes/subscriptionsRoutes";
 import membersRoutes from "./routes/membersRoutes";
+import usersRoutes from "./routes/usersRoutes";
+import connectDB from "./configs/db";
+import authRoutes from "./routes/authRoutes";
+import cookieParser from "cookie-parser";
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 // EJS settings
 app.set("view engine", "ejs");
@@ -20,14 +24,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// Routes
-app.get("/", (req: Request, res: Response) => {
-  res.render("index", {
-    pageTitle: "Express + TypeScript Server",
-    content: "Hello World",
-  });
-});
+//cookie parser
+app.use(cookieParser(process.env.COOKIE_SECRET!));
 
+// Routes
+app.use("/", authRoutes);
+app.use("/users", usersRoutes);
 app.use("/movies", moviesRouter);
 app.use("/subscriptions", subscriptionsRoutes);
 app.use("/members", membersRoutes);
@@ -38,6 +40,14 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: error.message });
 });
 
-app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
-});
+async function start() {
+  try {
+    await connectDB();
+    app.listen(port, () => {
+      console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
+start();
