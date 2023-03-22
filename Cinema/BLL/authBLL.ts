@@ -46,6 +46,7 @@ export const postSignup: RequestHandler = async (req, res, next) => {
     if user exist and have password, leave the password as is and return error
     if user exist and don't have password, create password and return success */
     const { userName, password } = req.body;
+    console.log(req.body);
     const user: UserPasswordDoc | null = await UserPassword.findOne({
       userName: userName,
     });

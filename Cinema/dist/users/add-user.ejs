@@ -1,0 +1,65 @@
+
+    <%- include('../includes/users-header.ejs') %>
+    <% if(editing) { %>
+        <div>
+            <h3><%= pageTitle %></h3>
+        </div>
+    <% } %>
+    <div class="members-form">
+        <%# If we are on "add user", the form action acts as normal post request. 
+        If we are on "edit user", the form action is "put" req, therefore execute js function for that. 
+        %>
+        <% if(editing) { %>
+        <form onsubmit="handleEditUser(event)">
+        <% } else {%>   
+        <form action="/users" method="post">
+        <% } %> 
+            <div>
+                <label for="name">First Name</label>
+                <input type="text" name="firstName" id="firstName" value='<%= editing ? user.firstName : undefined %>' required>
+            </div>
+            <div>
+                <label for="name">Last Name</label>
+                <input type="text" name="lastName" id="lastName" value='<%= editing ? user.lastName : undefined %>' required>
+            </div>
+         
+            <div>
+                <label for="userName">User Name</label>
+                <input type="email" name="userName" id="userName" value='<%= editing ? user.userName : undefined %>' required>
+            </div>
+
+            <div>
+                <label for="sessionTimeOut">Session Time Out (Mins)</label>
+                <input type="number" name="sessionTimeout" id="sessionTimeout" value='<%= editing ? user.sessionTimeout : undefined %>' required>
+            </div>
+
+            <div>
+                Permissions: <br>
+                <% permissionsTypes.forEach(permission => { %>
+                <div>
+
+                    <input type="checkbox" id="<%= permission.permission %>" name="permissions" onchange="handlePermissionsChange(event)" value="<%= permission.permission %>"  <% if(permission.checked){ %> checked <% }%>>
+                    <label for="<%= permission.permission %>"><%= permission.permission %></label>
+
+                </div>
+                <% }) %>
+
+            </div>
+            <% if(editing) { %>
+            <input type="hidden" name="id" value="<%= user._id %>">
+            <% } %>  
+            <div>
+                <button type="submit"><%= editing ? 'Edit User' : 'Add User' %></button>
+                <button onclick="location.href = '/users'; return false;">Cancel</button>
+            </div>
+            
+        </form>
+        
+    </div>
+
+
+</main>
+
+
+<script src="/js/users.js"></script>
+<%- include('../includes/end.ejs') %>

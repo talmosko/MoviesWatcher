@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import * as membersDAL from "../DAL/membersWS";
 import * as subscriptionsDAL from "../DAL/subscriptionsWS";
+import { hasPermission } from "../middlewares/authMiddlewares";
 
 import {
   MemberObject,
@@ -26,11 +27,10 @@ const getSubscriptionsForMember = (
 const getAllMembers: RequestHandler = async (req, res, next) => {
   try {
     //check 'View Subscriptions' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.ViewSubscriptions)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const hasViewSubscriptions = hasPermission(req, UserPermissions.ViewSubscriptions);
+    // if (!hasViewSubscriptions) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
 
     //get all members
 
@@ -44,11 +44,8 @@ const getAllMembers: RequestHandler = async (req, res, next) => {
       return getSubscriptionsForMember(member, allSubscriptions);
     });
 
-    res.render("subscriptions/all-members", {
-      pageTitle: "All Members",
+    res.json({
       members: allMembers,
-      path: "/subscriptions",
-      editing: false,
     });
   } catch (err: any) {
     let error = new Error(err);
@@ -59,11 +56,10 @@ const getAllMembers: RequestHandler = async (req, res, next) => {
 const getMemberById: RequestHandler = async (req, res, next) => {
   try {
     //check 'View Subscriptions' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.ViewSubscriptions)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const hasViewSubscriptions = hasPermission(req, UserPermissions.ViewSubscriptions);
+    // if (!hasViewSubscriptions) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
     let memberId = req.params.memberId;
     let member = await membersDAL.getMemberById(memberId);
 
@@ -74,11 +70,8 @@ const getMemberById: RequestHandler = async (req, res, next) => {
 
     member = getSubscriptionsForMember(member, allSubscriptions);
 
-    res.render("subscriptions/all-members", {
-      pageTitle: "All Members",
-      members: [member],
-      path: "/subscriptions",
-      editing: false,
+    res.json({
+      member,
     });
   } catch (err: any) {
     let error = new Error(err);
@@ -89,14 +82,16 @@ const getMemberById: RequestHandler = async (req, res, next) => {
 const addMember: RequestHandler = async (req, res, next) => {
   try {
     //check 'Create Subscriptions' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.CreateSubscriptions)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const hasCreateSubscriptions = hasPermission(
+    //   req,
+    //   UserPermissions.CreateSubscriptions
+    // );
+    // if (!hasCreateSubscriptions) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
     let member = req.body as MemberObject;
     await membersDAL.addMember(member);
-    res.redirect("/subscriptions");
+    res.json({ message: "Member added successfully", member });
   } catch (err: any) {
     let error = new Error(err);
     next(error);
@@ -106,15 +101,16 @@ const addMember: RequestHandler = async (req, res, next) => {
 const updateMember: RequestHandler = async (req, res, next) => {
   try {
     //check 'Update Subscriptions' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.UpdateSubscriptions)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const hasUpdateSubscriptions = hasPermission(req, UserPermissions.UpdateSubscriptions);
+    // if (!hasUpdateSubscriptions) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
     let memberId = req.params.memberId;
     let member = req.body;
     let updatedMember = await membersDAL.updateMember(memberId, member);
-    res.status(201).json(updatedMember);
+    res
+      .status(201)
+      .json({ message: "Member updated successfully", member: updatedMember });
   } catch (err: any) {
     let error = new Error(err);
     next(error);
@@ -124,14 +120,16 @@ const updateMember: RequestHandler = async (req, res, next) => {
 const deleteMember: RequestHandler = async (req, res, next) => {
   try {
     //check 'Delete Subscriptions' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.DeleteSubscriptions)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const hasDeleteSubscriptions = hasPermission(
+    //   req,
+    //   UserPermissions.DeleteSubscriptions
+    // );
+    // if (!hasDeleteSubscriptions) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
     let memberId = req.params.memberId;
     await membersDAL.deleteMember(memberId);
-    res.redirect(200, "/members");
+    res.status(200).json({ message: "Member deleted successfully" });
   } catch (err: any) {
     let error = new Error(err);
     next(error);

@@ -7,13 +7,6 @@ const router = Router();
 //Endpoint localhost:3000/subscriptions
 
 router.get(
-  "/",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
-  membersBLL.getAllMembers
-);
-
-router.get(
   "/subscribe-form/:memberId",
   authMiddlewares.jwtMiddleware,
   authMiddlewares.isAuth,

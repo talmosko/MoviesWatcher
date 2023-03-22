@@ -1,7 +1,8 @@
-import { RequestHandler } from "express";
+import { RequestHandler, Request } from "express";
 import * as permissionsFile from "../DAL/permissionsFile";
 import jwt, { Jwt, JwtPayload, VerifyErrors } from "jsonwebtoken";
 import {
+  PermissionsTypes,
   RequestWithUserPermissions,
   UserPermissionsObject,
 } from "../types/subscriptionsTypes";
@@ -54,4 +55,18 @@ export const isAuth: RequestHandler = async (req, res, next) => {
     return res.redirect("/");
   }
   return next();
+};
+
+//helper function - check if user has specific permission
+export const hasPermission = (
+  req: Request,
+  permission: typeof PermissionsTypes[number]
+) => {
+  const requestWithUserPermissions = req as RequestWithUserPermissions;
+  if (!requestWithUserPermissions.userPermissions) {
+    return false;
+  }
+  return requestWithUserPermissions.userPermissions.permissions.includes(
+    permission
+  );
 };

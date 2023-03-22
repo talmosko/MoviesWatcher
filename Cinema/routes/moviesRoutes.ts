@@ -24,36 +24,36 @@ router.get(
 
 router.get(
   "/",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   moviesBLL.getAllMovies
 );
 
 router.get(
   "/:movieId",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   moviesBLL.getMovieById
 );
 
 router.post(
   "/",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   moviesBLL.addMovie
 );
 
 router.put(
   "/:movieId",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   moviesBLL.updateMovie
 );
 
 router.delete(
   "/:movieId",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   moviesBLL.deleteMovie
 );
 

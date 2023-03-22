@@ -6,7 +6,11 @@ import {
 } from "../interfaces/mongoose.gen";
 
 const subscriptionsSchema: SubscriptionSchema = new mongoose.Schema({
-  memberId: { type: mongoose.Schema.Types.ObjectId, ref: "Member" },
+  memberId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Member",
+    unique: true,
+  },
   movies: [
     {
       movieId: { type: mongoose.Schema.Types.ObjectId, ref: "Movie" },

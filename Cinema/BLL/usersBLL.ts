@@ -8,6 +8,7 @@ import * as usersFile from "../DAL/usersFile";
 import * as permissionsFile from "../DAL/permissionsFile";
 import { UserObject, UserPermissions } from "../types/subscriptionsTypes";
 import { IUserPassword, UserPassword } from "../models/userPasswordModel";
+import { hasPermission } from "../middlewares/authMiddlewares";
 
 /*Pages */
 
@@ -81,15 +82,31 @@ export const getEditUserPage: RequestHandler = async (req, res, next) => {
 export const getUser: RequestHandler = async (req, res, next) => {
   try {
     //check 'Site Admin' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.SiteAdmin)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    const allUsers = await usersFile.getUsers();
+    // const hasSiteAdmin = hasPermission(req, UserPermissions.SiteAdmin);
+    // if (!hasSiteAdmin) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
+
     const { userId } = req.params;
-    const user = allUsers.find((user) => user._id.toString() === userId);
-    res.json(user);
+    const user = await usersFile.getUser(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const permissionsForUser = await permissionsFile.getPermissionUser(userId);
+
+    //get userName from users db
+    const userName: IUserPassword | null = await UserPassword.findById(userId, {
+      userName: 1,
+      _id: 1,
+    });
+
+    res.json({
+      user: {
+        ...user,
+        userName: userName?.userName,
+        permissions: permissionsForUser?.permissions,
+      },
+    });
   } catch (err: any) {
     next(err);
   }
@@ -98,11 +115,11 @@ export const getUser: RequestHandler = async (req, res, next) => {
 export const getUsers: RequestHandler = async (req, res, next) => {
   try {
     //check 'Site Admin' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.SiteAdmin)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const hasSiteAdmin = hasPermission(req, UserPermissions.SiteAdmin);
+    // if (!hasSiteAdmin) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
+
     //get all users from users.json
     const allJsonUsers = await usersFile.getUsers();
 
@@ -129,11 +146,9 @@ export const getUsers: RequestHandler = async (req, res, next) => {
         userName: userName?.userName,
       };
     }) as UserObject[];
-    res.status(200).render("users/all-users", {
-      pageTitle: "All Users",
+
+    res.status(200).json({
       users: allUsers,
-      path: "/users",
-      editing: false,
     });
   } catch (err: any) {
     next(err);
@@ -143,11 +158,11 @@ export const getUsers: RequestHandler = async (req, res, next) => {
 export const postUser: RequestHandler = async (req, res, next) => {
   try {
     //check 'Site Admin' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.SiteAdmin)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const hasSiteAdmin = hasPermission(req, UserPermissions.SiteAdmin);
+    // if (!hasSiteAdmin) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
+
     const inputUser: UserObject = req.body as UserObject;
     //save user to userPassword DB to get _id
     const userPassword = new UserPassword({ userName: inputUser.userName });
@@ -179,11 +194,11 @@ export const postUser: RequestHandler = async (req, res, next) => {
 export const deleteUser: RequestHandler = async (req, res, next) => {
   try {
     //check 'Site Admin' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.SiteAdmin)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const hasSiteAdmin = hasPermission(req, UserPermissions.SiteAdmin);
+    // if (!hasSiteAdmin) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
+
     const { userId } = req.params;
 
     //delete user from db
@@ -204,11 +219,11 @@ export const deleteUser: RequestHandler = async (req, res, next) => {
 export const putUser: RequestHandler = async (req, res, next) => {
   try {
     //check 'Site Admin' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.SiteAdmin)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const hasSiteAdmin = hasPermission(req, UserPermissions.SiteAdmin);
+    // if (!hasSiteAdmin) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
+
     const inputUser: UserObject = req.body as UserObject;
     //change userNmame in db
     await UserPassword.findByIdAndUpdate(inputUser._id, {

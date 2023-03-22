@@ -25,8 +25,7 @@ router.post(
   [
     body("userName")
       .isEmail()
-      .withMessage("Please enter a valid email address.")
-      .normalizeEmail(),
+      .withMessage("Please enter a valid email address."),
     body("password")
       .trim()
       .isStrongPassword()

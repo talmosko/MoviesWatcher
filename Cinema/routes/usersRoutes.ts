@@ -21,32 +21,32 @@ router.get(
 
 router.get(
   "/",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   usersBLL.getUsers
 );
 router.get(
   "/:userId",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   usersBLL.getUser
 );
 router.post(
   "/",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   usersBLL.postUser
 );
 router.delete(
   "/:userId",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   usersBLL.deleteUser
 );
 router.put(
   "/:userId",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   usersBLL.putUser
 );
 

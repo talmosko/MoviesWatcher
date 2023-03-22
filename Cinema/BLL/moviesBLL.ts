@@ -1,8 +1,10 @@
 import { RequestHandler } from "express";
 import * as moviesDAL from "../DAL/moviesWS";
 import * as subscriptionsDAL from "../DAL/subscriptionsWS";
+import { hasPermission } from "../middlewares/authMiddlewares";
 import {
   MovieObject,
+  MovieSubscriptionObject,
   RequestWithUserPermissions,
   SubscriptionObject,
   UserPermissions,
@@ -14,11 +16,15 @@ const getSubscriptionsForMovie = (
   movie: MovieObject,
   allSubscriptions: SubscriptionObject[]
 ): MovieObject => {
-  let movieSubscriptions: SubscriptionObject[] = [];
+  let movieSubscriptions: MovieSubscriptionObject[] = [];
   allSubscriptions.forEach((subscription) => {
     subscription.movies?.forEach((subMovie) => {
       if (subMovie.movieId._id === movie._id) {
-        movieSubscriptions.push({ ...subscription, movies: [subMovie] });
+        movieSubscriptions.push({
+          _id: subscription._id,
+          memberId: subscription.memberId,
+          date: subMovie.date,
+        });
       }
     });
   });
@@ -30,11 +36,11 @@ const getSubscriptionsForMovie = (
 const getAllMovies: RequestHandler = async (req, res, next) => {
   try {
     //check 'View Movies' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.ViewMovies)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const hasViewMovies = hasPermission(req, UserPermissions.ViewMovies);
+    // if (!hasViewMovies) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
+
     let allMovies = await moviesDAL.getMovies();
     let allSubscriptions = await subscriptionsDAL.getAllSubscriptions();
 
@@ -44,11 +50,8 @@ const getAllMovies: RequestHandler = async (req, res, next) => {
       return getSubscriptionsForMovie(movie, allSubscriptions);
     });
 
-    res.render("movies/all-movies", {
-      pageTitle: "All Movies",
+    res.json({
       movies: allMovies,
-      path: "/movies",
-      editing: false,
     });
   } catch (err: any) {
     console.log(err);
@@ -60,22 +63,18 @@ const getAllMovies: RequestHandler = async (req, res, next) => {
 const getMovieById: RequestHandler = async (req, res, next) => {
   try {
     //check 'View Movies' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.ViewMovies)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const hasViewMovies = hasPermission(req, UserPermissions.ViewMovies);
+    // if (!hasViewMovies) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
     let movieId = req.params.movieId;
     let movie = await moviesDAL.getMovieById(movieId);
 
     let allSubscriptions = await subscriptionsDAL.getAllSubscriptions();
     movie = getSubscriptionsForMovie(movie, allSubscriptions);
 
-    res.render("movies/all-movies", {
-      pageTitle: "All Movies",
-      movies: [movie],
-      path: "/movies",
-      editing: false,
+    res.json({
+      movie,
     });
   } catch (err: any) {
     let error = new Error(err);
@@ -85,16 +84,14 @@ const getMovieById: RequestHandler = async (req, res, next) => {
 
 const addMovie: RequestHandler = async (req, res, next) => {
   try {
-    //check 'Add Movies' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.CreateMovies)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    //check 'View Movies' permission
+    // const hasAddMovies = hasPermission(req, UserPermissions.CreateMovies);
+    // if (!hasAddMovies) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
     let movie = req.body;
     let insertedMovie = {
       ...movie,
-      genres: movie.genres.split(","),
     } as MovieObject;
     await moviesDAL.addMovie(insertedMovie);
     res.redirect("/movies");
@@ -107,17 +104,16 @@ const addMovie: RequestHandler = async (req, res, next) => {
 const updateMovie: RequestHandler = async (req, res, next) => {
   try {
     //check 'Update Movies' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.UpdateMovies)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const hasUpdateMovies = hasPermission(req, UserPermissions.UpdateMovies);
+    // if (!hasUpdateMovies) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
     let movieId = req.params.movieId;
     let movie = req.body;
     console.log(movie);
     console.log(movieId);
     let updatedMovie = await moviesDAL.updateMovie(movieId, movie);
-    res.status(201).json(updatedMovie);
+    res.status(201).json({ message: "Movie Updated", movie: updatedMovie });
   } catch (err: any) {
     let error = new Error(err);
     next(error);
@@ -126,15 +122,14 @@ const updateMovie: RequestHandler = async (req, res, next) => {
 
 const deleteMovie: RequestHandler = async (req, res, next) => {
   try {
-    //check 'delete Movies' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.DeleteMovies)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    //check 'Delete Movies' permission
+    // const hasDeleteMovies = hasPermission(req, UserPermissions.DeleteMovies);
+    // if (!hasDeleteMovies) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
     let movieId = req.params.movieId;
     await moviesDAL.deleteMovie(movieId);
-    res.redirect(200, "/movies");
+    res.status(200).json({ message: "Movie Deleted" });
   } catch (err: any) {
     let error = new Error(err);
     next(error);

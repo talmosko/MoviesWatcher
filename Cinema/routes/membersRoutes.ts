@@ -21,31 +21,39 @@ router.get(
 );
 
 // CRUD - Create, Read, Update, Delete
+
+router.get(
+  "/",
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
+  membersBLL.getAllMembers
+);
+
 router.get(
   "/:memberId",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   membersBLL.getMemberById
 );
 
 router.post(
   "/",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   membersBLL.addMember
 );
 
 router.put(
   "/:memberId",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   membersBLL.updateMember
 );
 
 router.delete(
   "/:memberId",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   membersBLL.deleteMember
 );
 

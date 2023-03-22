@@ -18,13 +18,19 @@ export type MovieObject = {
   genres: string[];
   image: string;
   premiered?: Date;
-  subscriptions?: SubscriptionObject[];
+  subscriptions?: MovieSubscriptionObject[];
 };
 
 export type SubscriptionObject = {
   _id?: ObjectId;
-  memberId?: MemberObject;
+  memberId: MemberObject;
   movies?: [{ movieId: MovieObject; date: Date }];
+};
+
+export type MovieSubscriptionObject = {
+  _id?: ObjectId;
+  memberId: MemberObject;
+  date: Date;
 };
 
 export const PermissionsTypes = [

@@ -8,10 +8,14 @@ import usersRoutes from "./routes/usersRoutes";
 import connectDB from "./configs/db";
 import authRoutes from "./routes/authRoutes";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
+
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 // EJS settings
 app.set("view engine", "ejs");
@@ -37,7 +41,7 @@ app.use("/members", membersRoutes);
 //Error handling middleware
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   console.log(error);
-  res.status(500).json({ message: error.message });
+  res.status(500).json({ error: error.message });
 });
 
 async function start() {
