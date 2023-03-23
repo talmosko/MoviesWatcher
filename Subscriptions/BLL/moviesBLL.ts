@@ -74,7 +74,6 @@ const deleteMovie = async (movieId: string): Promise<MovieObject | null> => {
       { "movies.movieId": movieId },
       { $pull: { movies: { movieId: movieId } } }
     );
-    console.log(subsc);
 
     //delete movie
     return await Movie.findByIdAndDelete(movieId);

@@ -3,6 +3,7 @@ import * as moviesWS from "../DAL/moviesWS";
 import {
   RequestWithUserPermissions,
   SubscriptionObject,
+  SubscriptionRequestObject,
   UserPermissions,
 } from "../types/subscriptionsTypes";
 import * as subscriptionWS from "../DAL/subscriptionsWS";
@@ -51,14 +52,18 @@ const getSubscribeForm: RequestHandler = async (req, res, next) => {
 const postSubscription: RequestHandler = async (req, res, next) => {
   try {
     //check 'Create Subscriptions' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.CreateSubscriptions)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    const subscription: SubscriptionObject = req.body as SubscriptionObject;
-    await subscriptionWS.postSubscription(subscription);
-    res.redirect("/subscriptions");
+    // const hasCreateSubscriptions = hasPermission(
+    //   req,
+    //   UserPermissions.CreateSubscriptions
+    // );
+    // if (!hasCreateSubscriptions) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
+    const subscription: SubscriptionRequestObject =
+      req.body as SubscriptionRequestObject;
+    const newSubscription: SubscriptionObject =
+      await subscriptionWS.postSubscription(subscription);
+    res.status(201).json({ message: "ok", subscription: newSubscription });
   } catch (err: any) {
     next(err);
   }

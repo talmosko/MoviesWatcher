@@ -15,8 +15,8 @@ router.get(
 
 router.post(
   "/",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  // authMiddlewares.jwtMiddleware,
+  // authMiddlewares.isAuth,
   subscriptionsBLL.postSubscription
 );
 

@@ -5,11 +5,15 @@ import { Request } from "express";
 export type MemberObject = {
   _id: ObjectId;
   externalId?: number;
-  name?: string;
-  email?: string;
-  city?: string;
-  subscriptions?: SubscriptionObject[];
+  name: string;
+  email: string;
+  city: string;
+  subscriptions?: Pick<SubscriptionObject, "_id" | "movies">;
 };
+
+export type SubscriptionMemberObject = Pick<MemberObject, "_id" | "name">;
+
+export type SubscriptionMovieObject = Pick<MovieObject, "_id" | "name">;
 
 export type MovieObject = {
   _id: ObjectId;
@@ -23,13 +27,19 @@ export type MovieObject = {
 
 export type SubscriptionObject = {
   _id?: ObjectId;
-  memberId: MemberObject;
-  movies?: [{ movieId: MovieObject; date: Date }];
+  memberId: SubscriptionMemberObject;
+  movies?: [{ movieId: SubscriptionMovieObject; date: Date }];
 };
 
 export type MovieSubscriptionObject = {
   _id?: ObjectId;
-  memberId: MemberObject;
+  memberId: SubscriptionMemberObject;
+  date: Date;
+};
+
+export type SubscriptionRequestObject = {
+  memberId: ObjectId;
+  movieId: ObjectId;
   date: Date;
 };
 

@@ -13,7 +13,10 @@ const subscriptionsSchema: SubscriptionSchema = new mongoose.Schema({
   },
   movies: [
     {
-      movieId: { type: mongoose.Schema.Types.ObjectId, ref: "Movie" },
+      movieId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Movie",
+      },
       date: Date,
     },
   ],

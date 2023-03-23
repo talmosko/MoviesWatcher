@@ -5,6 +5,7 @@ import {
   getSubscriptionsForMember,
   getAllSubscriptions,
 } from "../BLL/subscriptionsBLL";
+import { SubscriptionObject } from "../interfaces/mongoose.gen";
 const router = Router();
 
 router.post("/", async (req, res, next) => {
@@ -12,9 +13,14 @@ router.post("/", async (req, res, next) => {
     const movieId = req.body.movieId as ObjectId;
     const memberId = req.body.memberId as ObjectId;
     const date = req.body.date as Date;
-    await postSubscription(movieId, memberId, date);
-    res.status(201).json({ message: "ok" });
+    const newSubscription: SubscriptionObject = await postSubscription(
+      movieId,
+      memberId,
+      date
+    );
+    res.status(201).json({ message: "ok", subscription: newSubscription });
   } catch (err) {
+    console.log(err);
     return next(err);
   }
 });

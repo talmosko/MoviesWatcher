@@ -16,11 +16,11 @@ const getSubscriptionsForMember = (
   member: MemberObject,
   allSubscriptions: SubscriptionObject[]
 ): MemberObject => {
-  let memberSubscriptions = allSubscriptions.filter((subscription) => {
+  let memberSubscriptions = allSubscriptions.find((subscription) => {
     return subscription.memberId?._id === member._id;
   });
 
-  return { ...member, subscriptions: memberSubscriptions } as MemberObject;
+  return { ...member, subscriptions: memberSubscriptions };
 };
 
 /* CRUD - Create, Read, Update, Delete Operations */

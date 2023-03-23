@@ -40,7 +40,7 @@ app.use("/members", membersRoutes);
 
 //Error handling middleware
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
-  console.log(error);
+  console.log("ERROR" + error);
   res.status(500).json({ error: error.message });
 });
 
