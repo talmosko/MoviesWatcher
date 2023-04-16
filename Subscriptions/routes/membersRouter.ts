@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as membersBLL from "../BLL/membersBLL";
-import { MemberObject } from "../interfaces/mongoose.gen";
+import { MemberObject, SubscriptionObject } from "../interfaces/mongoose.gen";
 
 const router = Router();
 
@@ -47,8 +47,11 @@ router.put("/:memberId", async (req, res, next) => {
 router.delete("/:memberId", async (req, res, next) => {
   try {
     const memberId = req.params.memberId;
-    await membersBLL.deleteMember(memberId);
-    res.status(200).json({ message: "Member deleted" });
+    const deleteResponse: {
+      memberId: MemberObject["_id"];
+      subscriptions: SubscriptionObject["_id"][];
+    } = await membersBLL.deleteMember(memberId);
+    res.status(200).json(deleteResponse);
   } catch (err) {
     return next(err);
   }

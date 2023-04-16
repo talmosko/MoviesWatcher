@@ -2,7 +2,7 @@ import axios from "axios";
 import {
   SubscriptionObject,
   SubscriptionRequestObject,
-} from "../types/subscriptionsTypes";
+} from "../types/objectTypes";
 import dotenv from "dotenv";
 import { ObjectId } from "mongoose";
 dotenv.config();
@@ -11,18 +11,18 @@ const address =
   (process.env.SUBSCRIPTIONS_API_URL || "http://localhost:8000/") +
   "subscriptions";
 
-const postSubscription = async (subscription: SubscriptionRequestObject) => {
+const postSubscription = async (
+  subscriptionReq: SubscriptionRequestObject
+): Promise<SubscriptionObject> => {
   try {
-    const response = await axios.post(address, subscription);
+    const response = await axios.post(address, subscriptionReq);
     if (response.status !== 201) {
       console.log("ERROR: " + response.data);
       throw new Error("Subscription not added");
     }
-    const { subscription: newSubscription } = (await response.data) as {
-      message: string;
-      subscription: SubscriptionObject;
-    };
-    return newSubscription;
+    console.log(response.data);
+    const subscription = (await response.data) as SubscriptionObject;
+    return subscription;
   } catch (error: any) {
     throw new Error("Subscription not added");
   }

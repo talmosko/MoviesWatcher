@@ -3,10 +3,10 @@ import {
   PermissionsTypes,
   RequestWithUserPermissions,
   UserPermissionsObject,
-} from "../types/subscriptionsTypes";
+} from "../types/objectTypes";
 import * as usersFile from "../DAL/usersFile";
 import * as permissionsFile from "../DAL/permissionsFile";
-import { UserObject, UserPermissions } from "../types/subscriptionsTypes";
+import { UserObject, UserPermissions } from "../types/objectTypes";
 import { IUserPassword, UserPassword } from "../models/userPasswordModel";
 import { hasPermission } from "../middlewares/authMiddlewares";
 

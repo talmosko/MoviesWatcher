@@ -1,4 +1,4 @@
-import { UserPermissionsObject } from "../types/subscriptionsTypes";
+import { UserPermissionsObject } from "../types/objectTypes";
 
 import jsonfile from "jsonfile";
 

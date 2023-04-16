@@ -5,7 +5,7 @@ import {
   PermissionsTypes,
   RequestWithUserPermissions,
   UserPermissionsObject,
-} from "../types/subscriptionsTypes";
+} from "../types/objectTypes";
 
 // jwt token middleware - get 'jwt' token from cookie and verify it
 export const jwtMiddleware: RequestHandler = async (req, res, next) => {

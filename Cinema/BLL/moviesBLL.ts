@@ -4,32 +4,10 @@ import * as subscriptionsDAL from "../DAL/subscriptionsWS";
 import { hasPermission } from "../middlewares/authMiddlewares";
 import {
   MovieObject,
-  MovieSubscriptionObject,
   RequestWithUserPermissions,
   SubscriptionObject,
   UserPermissions,
-} from "../types/subscriptionsTypes";
-
-/* Helper Functions */
-//gets movie (without subscriptions) and all subscriptions, returns movie with subscriptions
-const getSubscriptionsForMovie = (
-  movie: MovieObject,
-  allSubscriptions: SubscriptionObject[]
-): MovieObject => {
-  let movieSubscriptions: MovieSubscriptionObject[] = [];
-  allSubscriptions.forEach((subscription) => {
-    subscription.movies?.forEach((subMovie) => {
-      if (subMovie.movieId._id === movie._id) {
-        movieSubscriptions.push({
-          _id: subscription._id,
-          memberId: subscription.memberId,
-          date: subMovie.date,
-        });
-      }
-    });
-  });
-  return { ...movie, subscriptions: movieSubscriptions };
-};
+} from "../types/objectTypes";
 
 /* CRUD - Create, Read, Update, Delete Operations */
 
@@ -41,21 +19,14 @@ const getAllMovies: RequestHandler = async (req, res, next) => {
     //   return res.status(401).json({ message: "Unauthorized" });
     // }
 
-    let allMovies = await moviesDAL.getMovies();
-    let allSubscriptions = await subscriptionsDAL.getAllSubscriptions();
-
-    //for each movie, match the subscriptions
-
-    allMovies = allMovies.map((movie) => {
-      return getSubscriptionsForMovie(movie, allSubscriptions);
-    });
+    const allMovies = await moviesDAL.getMovies();
 
     res.json({
       movies: allMovies,
     });
   } catch (err: any) {
     console.log(err);
-    let error = new Error(err);
+    const error = new Error(err);
     return next(error);
   }
 };
@@ -67,17 +38,14 @@ const getMovieById: RequestHandler = async (req, res, next) => {
     // if (!hasViewMovies) {
     //   return res.status(401).json({ message: "Unauthorized" });
     // }
-    let movieId = req.params.movieId;
-    let movie = await moviesDAL.getMovieById(movieId);
-
-    let allSubscriptions = await subscriptionsDAL.getAllSubscriptions();
-    movie = getSubscriptionsForMovie(movie, allSubscriptions);
+    const movieId = req.params.movieId;
+    const movie = await moviesDAL.getMovieById(movieId);
 
     res.json({
       movie,
     });
   } catch (err: any) {
-    let error = new Error(err);
+    const error = new Error(err);
     next(error);
   }
 };
@@ -89,14 +57,14 @@ const addMovie: RequestHandler = async (req, res, next) => {
     // if (!hasAddMovies) {
     //   return res.status(401).json({ message: "Unauthorized" });
     // }
-    let movie = req.body;
-    let insertedMovie = {
+    const movie = req.body;
+    const insertedMovie = {
       ...movie,
     } as MovieObject;
     await moviesDAL.addMovie(insertedMovie);
     res.redirect("/movies");
   } catch (err: any) {
-    let error = new Error(err);
+    const error = new Error(err);
     next(error);
   }
 };
@@ -108,14 +76,14 @@ const updateMovie: RequestHandler = async (req, res, next) => {
     // if (!hasUpdateMovies) {
     //   return res.status(401).json({ message: "Unauthorized" });
     // }
-    let movieId = req.params.movieId;
-    let movie = req.body;
+    const movieId = req.params.movieId;
+    const movie = req.body;
     console.log(movie);
     console.log(movieId);
-    let updatedMovie = await moviesDAL.updateMovie(movieId, movie);
+    const updatedMovie = await moviesDAL.updateMovie(movieId, movie);
     res.status(201).json({ message: "Movie Updated", movie: updatedMovie });
   } catch (err: any) {
-    let error = new Error(err);
+    const error = new Error(err);
     next(error);
   }
 };
@@ -127,11 +95,14 @@ const deleteMovie: RequestHandler = async (req, res, next) => {
     // if (!hasDeleteMovies) {
     //   return res.status(401).json({ message: "Unauthorized" });
     // }
-    let movieId = req.params.movieId;
-    await moviesDAL.deleteMovie(movieId);
-    res.status(200).json({ message: "Movie Deleted" });
+    const movieId = req.params.movieId;
+    const deleteRes: {
+      movieId: MovieObject["_id"];
+      subscriptions: SubscriptionObject[];
+    } = await moviesDAL.deleteMovie(movieId);
+    res.status(200).json(deleteRes);
   } catch (err: any) {
-    let error = new Error(err);
+    const error = new Error(err);
     next(error);
   }
 };
@@ -179,7 +150,7 @@ const getEditMoviePage: RequestHandler = async (req, res, next) => {
       editing: true,
     });
   } catch (err: any) {
-    let error = new Error(err);
+    const error = new Error(err);
     next(error);
   }
 };

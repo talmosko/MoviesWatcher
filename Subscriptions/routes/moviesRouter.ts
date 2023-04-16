@@ -1,12 +1,12 @@
 import { Router } from "express";
 import * as moviesBLL from "../BLL/moviesBLL";
-import { MovieObject } from "../interfaces/mongoose.gen";
+import { MovieObject, SubscriptionObject } from "../interfaces/mongoose.gen";
 
 const router = Router();
 
 router.get("/", async (req, res, next) => {
   try {
-    let movies = await moviesBLL.getAllMovies();
+    const movies = await moviesBLL.getAllMovies();
     res.json(movies);
   } catch (err) {
     return next(err);
@@ -49,8 +49,11 @@ router.put("/:movieId", async (req, res, next) => {
 router.delete("/:movieId", async (req, res, next) => {
   try {
     const movieId = req.params.movieId;
-    await moviesBLL.deleteMovie(movieId);
-    res.status(200).json({ message: "Movie deleted" });
+    const deleteResponse: {
+      movieId: MovieObject["_id"];
+      subscriptions: SubscriptionObject[];
+    } = await moviesBLL.deleteMovie(movieId);
+    res.status(200).json(deleteResponse);
   } catch (err) {
     return next(err);
   }

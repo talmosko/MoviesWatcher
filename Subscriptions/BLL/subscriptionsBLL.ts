@@ -1,8 +1,10 @@
-import { Types, ObjectId } from "mongoose";
+import { Types, ObjectId, PopulatedDoc } from "mongoose";
 import {
+  MemberDocument,
   SubscriptionDocument,
   SubscriptionObject,
 } from "../interfaces/mongoose.gen";
+import Member from "../models/membersModel";
 import Movie from "../models/movieModel";
 import Subscription from "../models/subscriptionsModel";
 
@@ -24,16 +26,19 @@ const postSubscription = async (
     if (subscription) {
       throw new Error("Subscription to that movie already exists");
     }
-    let returnSubscription: SubscriptionObject | null =
-      await Subscription.findOneAndUpdate(
-        { memberId: memberId },
-        { $addToSet: { movies: { movieId: movieId, date: date } } },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-      );
-    if (!returnSubscription) {
+    let updatedSubscription = await Subscription.findOneAndUpdate(
+      { memberId: memberId },
+      { $addToSet: { movies: { movieId: movieId, date: date } } },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    if (!updatedSubscription) {
       throw new Error("Subscription not found");
     }
-    return returnSubscription;
+
+    return {
+      subscription: updatedSubscription,
+    };
   } catch (err: any) {
     console.log(err);
     throw new Error(err);

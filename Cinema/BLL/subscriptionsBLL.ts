@@ -5,7 +5,7 @@ import {
   SubscriptionObject,
   SubscriptionRequestObject,
   UserPermissions,
-} from "../types/subscriptionsTypes";
+} from "../types/objectTypes";
 import * as subscriptionWS from "../DAL/subscriptionsWS";
 import { ObjectId, Schema } from "mongoose";
 

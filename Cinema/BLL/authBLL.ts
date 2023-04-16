@@ -13,7 +13,7 @@ import {
   RequestWithUserPermissions,
   UserObject,
   UserPermissionsObject,
-} from "../types/subscriptionsTypes";
+} from "../types/objectTypes";
 
 export const getLoginPage: RequestHandler = (req, res, next) => {
   res.render("auth/login", {
