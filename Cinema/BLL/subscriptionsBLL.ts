@@ -1,64 +1,12 @@
 import { RequestHandler } from "express";
-import * as moviesWS from "../DAL/moviesWS";
 import {
-  RequestWithUserPermissions,
   SubscriptionObject,
   SubscriptionRequestObject,
-  UserPermissions,
 } from "../types/objectTypes";
 import * as subscriptionWS from "../DAL/subscriptionsWS";
-import { ObjectId, Schema } from "mongoose";
-
-const getSubscribeForm: RequestHandler = async (req, res, next) => {
-  try {
-    //check 'Create Subscriptions' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.CreateSubscriptions)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    //gets all movies
-    const memberId = req.params.memberId;
-    const movies = await moviesWS.getMovies();
-
-    //get all subscriptions by member id
-    const subscriptions = await subscriptionWS.getSubscriptionsByMemberId(
-      memberId
-    );
-
-    // get all subscribed movies _id array
-    const subscribedMovies = [] as ObjectId[];
-    subscriptions.forEach((subscription) => {
-      subscription.movies?.forEach((movie) => {
-        subscribedMovies.push(movie.movieId._id);
-      });
-    });
-    console.log(subscribedMovies);
-
-    //filter movies that are already subscribed to
-    const filteredMovies = movies.filter((movie) => {
-      return !subscribedMovies.includes(movie._id);
-    });
-
-    res.render("subscriptions/subscribe-form", {
-      movies: filteredMovies,
-      memberId: memberId,
-    });
-  } catch (err: any) {
-    next(err);
-  }
-};
 
 const postSubscription: RequestHandler = async (req, res, next) => {
   try {
-    //check 'Create Subscriptions' permission
-    // const hasCreateSubscriptions = hasPermission(
-    //   req,
-    //   UserPermissions.CreateSubscriptions
-    // );
-    // if (!hasCreateSubscriptions) {
-    //   return res.status(401).json({ message: "Unauthorized" });
-    // }
     const subscription: SubscriptionRequestObject =
       req.body as SubscriptionRequestObject;
     const newSubscription: SubscriptionObject =
@@ -69,4 +17,14 @@ const postSubscription: RequestHandler = async (req, res, next) => {
   }
 };
 
-export { getSubscribeForm, postSubscription };
+const getAllSubscriptions: RequestHandler = async (req, res, next) => {
+  try {
+    const allSubs: SubscriptionObject[] =
+      await subscriptionWS.getAllSubscriptions();
+    res.status(201).json({ message: "ok", subscriptions: allSubs });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+export { postSubscription, getAllSubscriptions };

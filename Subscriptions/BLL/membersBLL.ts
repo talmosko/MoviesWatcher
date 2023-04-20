@@ -74,7 +74,6 @@ const deleteMember = async (
   memberId: string
 ): Promise<{
   memberId: MemberObject["_id"];
-  subscriptions: SubscriptionObject["_id"][];
 }> => {
   try {
     //Delete member
@@ -86,25 +85,14 @@ const deleteMember = async (
     if (!deletedMember)
       throw new Error("Member not found, therefore not deleted");
 
-    // Get the Subscriptions that have the specified memberId
-    const subsToDelete: SubscriptionObject[] = await Subscription.find({
-      memberId: memberId,
-    }).catch((err) => {
-      throw new Error("error finding subscriptions to delete" + err);
-    });
-
     // Delete the Subscriptions and retrieve them at the same time
-    const deletedSubs = await Subscription.deleteMany({
+    await Subscription.deleteMany({
       memberId: memberId,
     }).catch((err) => {
       throw new Error("error deleting subscriptions" + err);
     });
 
-    // Extract the deleted documents from the result
-    const deletedSubsIds =
-      deletedSubs.deletedCount > 0 ? subsToDelete.map((sub) => sub._id) : [];
-
-    return { memberId: deletedMember._id, subscriptions: deletedSubsIds };
+    return { memberId: deletedMember._id };
   } catch (err: any) {
     throw new Error(err);
   }

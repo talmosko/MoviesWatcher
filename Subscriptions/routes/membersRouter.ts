@@ -49,7 +49,6 @@ router.delete("/:memberId", async (req, res, next) => {
     const memberId = req.params.memberId;
     const deleteResponse: {
       memberId: MemberObject["_id"];
-      subscriptions: SubscriptionObject["_id"][];
     } = await membersBLL.deleteMember(memberId);
     res.status(200).json(deleteResponse);
   } catch (err) {

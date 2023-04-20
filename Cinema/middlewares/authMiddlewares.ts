@@ -48,25 +48,23 @@ export const jwtMiddleware: RequestHandler = async (req, res, next) => {
   }
 };
 
-//auth middleware - check if user is logged in and redirect to login page if not, check permissions
-export const isAuth: RequestHandler = async (req, res, next) => {
-  const requestWithUserPermissions = req as RequestWithUserPermissions;
-  if (!requestWithUserPermissions.userPermissions) {
-    return res.redirect("/");
-  }
-  return next();
-};
+//auth middleware - check if user has specific permission
 
-//helper function - check if user has specific permission
-export const hasPermission = (
-  req: Request,
+export const isAuth = (
   permission: typeof PermissionsTypes[number]
-) => {
-  const requestWithUserPermissions = req as RequestWithUserPermissions;
-  if (!requestWithUserPermissions.userPermissions) {
-    return false;
-  }
-  return requestWithUserPermissions.userPermissions.permissions.includes(
-    permission
-  );
+): RequestHandler => {
+  return (req, res, next) => {
+    const requestWithUserPermissions = req as RequestWithUserPermissions;
+    if (!requestWithUserPermissions.userPermissions) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    if (
+      !requestWithUserPermissions.userPermissions.permissions.includes(
+        permission
+      )
+    ) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    return next();
+  };
 };

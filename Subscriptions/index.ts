@@ -34,11 +34,6 @@ async function start() {
 
 app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-  console.log("Hello World");
-  res.send("Express + TypeScript Server");
-});
-
 app.use("/movies", moviesRouter);
 app.use("/members", membersRouter);
 app.use("/subscriptions", subscriptionsRouter);
