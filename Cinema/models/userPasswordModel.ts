@@ -3,7 +3,7 @@ import * as mongoose from "mongoose";
 interface IUserPassword {
   _id: mongoose.Types.ObjectId;
   userName: string;
-  password: string;
+  password?: string;
 }
 
 const UserPasswordSchema = new mongoose.Schema<IUserPassword>({

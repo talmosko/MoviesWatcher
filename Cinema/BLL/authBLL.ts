@@ -67,7 +67,7 @@ export const postLogin: RequestHandler = async (req, res, next) => {
   if (!user) {
     return res.status(422).json({ message: "Invalid user name or password" });
   }
-  const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await bcrypt.compare(password, user.password || "");
   if (!isMatch) {
     return res.status(422).json({ message: "Invalid user name or password" });
   }
