@@ -1,5 +1,9 @@
 import * as moviesWS from "../DAL/moviesWS";
-import { MovieDocument, MovieObject } from "../interfaces/mongoose.gen";
+import {
+  MovieDocument,
+  MovieObject,
+  SubscriptionObject,
+} from "../interfaces/mongoose.gen";
 import Movie from "../models/movieModel";
 import Subscription from "../models/subscriptionsModel";
 
@@ -67,17 +71,53 @@ const updateMovie = async (
   }
 };
 
-const deleteMovie = async (movieId: string): Promise<MovieObject | null> => {
+const deleteMovie = async (
+  movieId: string
+): Promise<{
+  movieId: MovieObject["_id"];
+  subscriptions: SubscriptionObject[];
+}> => {
   try {
-    //Delete subscriptions of movie
-    const subsc = await Subscription.updateMany(
+    //delete movie
+    const deletedMovie: MovieObject | null = await Movie.findByIdAndDelete(
+      movieId,
+      {
+        _id: 1,
+      }
+    ).catch((err) => {
+      throw new Error("Error deleting movie: " + err);
+    });
+
+    if (!deletedMovie) throw new Error("Movie not found");
+
+    // Get the Subscriptions _id's that have the specified movieId
+    const subsToUpdate = await Subscription.find(
+      {
+        "movies.movieId": movieId,
+      },
+      { _id: 1 }
+    ).catch((err) => {
+      throw new Error(
+        "Error getting Subscriptions: for movieId" + movieId + err
+      );
+    });
+
+    // Update all Subscriptions that have the specified movieId
+    await Subscription.updateMany(
       { "movies.movieId": movieId },
       { $pull: { movies: { movieId: movieId } } }
-    );
-    console.log(subsc);
+    ).catch((err) => {
+      throw new Error("Error updating Subscriptions: " + err);
+    });
 
-    //delete movie
-    return await Movie.findByIdAndDelete(movieId);
+    // Get the updated Subscriptions by their _id's
+    const updatedSubs = await Subscription.find({
+      _id: { $in: subsToUpdate },
+    }).catch((err) => {
+      throw new Error("Error getting updated Subscriptions: " + err);
+    });
+
+    return { movieId: deletedMovie?._id, subscriptions: updatedSubs };
   } catch (err: any) {
     throw new Error(err);
   }

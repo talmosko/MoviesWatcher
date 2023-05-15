@@ -1,5 +1,5 @@
 import axios from "axios";
-import { MovieObject } from "../types/subscriptionsTypes";
+import { MovieObject } from "../types/objectTypes";
 import dotenv from "dotenv";
 dotenv.config();
 

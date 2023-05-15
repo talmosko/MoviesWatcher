@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as membersBLL from "../BLL/membersBLL";
 import * as subscriptionsBLL from "../BLL/subscriptionsBLL";
 import * as authMiddlewares from "../middlewares/authMiddlewares";
+import { UserPermissions } from "../types/objectTypes";
 const router = Router();
 
 //Endpoint localhost:3000/subscriptions
@@ -9,21 +10,14 @@ const router = Router();
 router.get(
   "/",
   authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
-  membersBLL.getAllMembers
-);
-
-router.get(
-  "/subscribe-form/:memberId",
-  authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
-  subscriptionsBLL.getSubscribeForm
+  authMiddlewares.isAuth(UserPermissions.ViewSubscriptions),
+  subscriptionsBLL.getAllSubscriptions
 );
 
 router.post(
   "/",
   authMiddlewares.jwtMiddleware,
-  authMiddlewares.isAuth,
+  authMiddlewares.isAuth(UserPermissions.CreateSubscriptions),
   subscriptionsBLL.postSubscription
 );
 

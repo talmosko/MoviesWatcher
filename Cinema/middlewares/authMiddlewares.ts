@@ -1,10 +1,11 @@
-import { RequestHandler } from "express";
+import { RequestHandler, Request } from "express";
 import * as permissionsFile from "../DAL/permissionsFile";
 import jwt, { Jwt, JwtPayload, VerifyErrors } from "jsonwebtoken";
 import {
+  PermissionsTypes,
   RequestWithUserPermissions,
   UserPermissionsObject,
-} from "../types/subscriptionsTypes";
+} from "../types/objectTypes";
 
 // jwt token middleware - get 'jwt' token from cookie and verify it
 export const jwtMiddleware: RequestHandler = async (req, res, next) => {
@@ -47,11 +48,23 @@ export const jwtMiddleware: RequestHandler = async (req, res, next) => {
   }
 };
 
-//auth middleware - check if user is logged in and redirect to login page if not, check permissions
-export const isAuth: RequestHandler = async (req, res, next) => {
-  const requestWithUserPermissions = req as RequestWithUserPermissions;
-  if (!requestWithUserPermissions.userPermissions) {
-    return res.redirect("/");
-  }
-  return next();
+//auth middleware - check if user has specific permission
+
+export const isAuth = (
+  permission: typeof PermissionsTypes[number]
+): RequestHandler => {
+  return (req, res, next) => {
+    const requestWithUserPermissions = req as RequestWithUserPermissions;
+    if (!requestWithUserPermissions.userPermissions) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    if (
+      !requestWithUserPermissions.userPermissions.permissions.includes(
+        permission
+      )
+    ) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    return next();
+  };
 };

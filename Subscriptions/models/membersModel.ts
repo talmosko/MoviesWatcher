@@ -8,7 +8,7 @@ import {
 const memberSchema: MemberSchema = new mongoose.Schema({
   externalId: Number,
   name: String,
-  email: String,
+  email: { type: String, unique: true },
   city: String,
 });
 

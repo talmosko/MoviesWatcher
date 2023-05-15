@@ -1,5 +1,5 @@
 import getMembers from "../DAL/membersWS";
-import { MemberObject } from "../interfaces/mongoose.gen";
+import { MemberObject, SubscriptionObject } from "../interfaces/mongoose.gen";
 import Member from "../models/membersModel";
 import Subscription from "../models/subscriptionsModel";
 
@@ -70,13 +70,29 @@ const updateMember = async (
   }
 };
 
-const deleteMember = async (memberId: string): Promise<MemberObject | null> => {
+const deleteMember = async (
+  memberId: string
+): Promise<{
+  memberId: MemberObject["_id"];
+}> => {
   try {
-    //Delete subscriptions of member
-    await Subscription.deleteMany({ memberId: memberId });
-
     //Delete member
-    return await Member.findByIdAndDelete(memberId);
+    const deletedMember: MemberObject | null = await Member.findByIdAndDelete(
+      memberId
+    ).catch((err) => {
+      throw new Error("error deleting member" + err);
+    });
+    if (!deletedMember)
+      throw new Error("Member not found, therefore not deleted");
+
+    // Delete the Subscriptions and retrieve them at the same time
+    await Subscription.deleteMany({
+      memberId: memberId,
+    }).catch((err) => {
+      throw new Error("error deleting subscriptions" + err);
+    });
+
+    return { memberId: deletedMember._id };
   } catch (err: any) {
     throw new Error(err);
   }

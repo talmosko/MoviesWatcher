@@ -7,26 +7,13 @@ const router = Router();
 
 //Endpoint localhost:3000/auth
 
-/*gets the jwt token from cookies and verifies it
-if is loggend in - get the home page, if not, get the login page*/
-router.get(
-  "/",
-  authMiddlewares.jwtMiddleware,
-  authBLL.getHomePage,
-  authBLL.getLoginPage
-);
-
-router.get("/signup", authBLL.getSignupPage);
-
-export default router;
 //
 router.post(
   "/signup",
   [
     body("userName")
       .isEmail()
-      .withMessage("Please enter a valid email address.")
-      .normalizeEmail(),
+      .withMessage("Please enter a valid email address."),
     body("password")
       .trim()
       .isStrongPassword()
@@ -47,3 +34,5 @@ router.post(
 );
 
 router.post("/logout", authBLL.postLogout);
+
+export default router;

@@ -1,4 +1,4 @@
-import { UserObject } from "../types/subscriptionsTypes";
+import { UserObject } from "../types/objectTypes";
 
 import jsonfile from "jsonfile";
 

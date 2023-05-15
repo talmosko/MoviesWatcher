@@ -1,46 +1,12 @@
 import { RequestHandler } from "express";
-import {
-  PermissionsTypes,
-  RequestWithUserPermissions,
-  UserPermissionsObject,
-} from "../types/subscriptionsTypes";
+import { UserPermissionsObject } from "../types/objectTypes";
 import * as usersFile from "../DAL/usersFile";
 import * as permissionsFile from "../DAL/permissionsFile";
-import { UserObject, UserPermissions } from "../types/subscriptionsTypes";
+import { UserObject, UserPermissions } from "../types/objectTypes";
 import { IUserPassword, UserPassword } from "../models/userPasswordModel";
 
-/*Pages */
-
-export const getAddUserPage: RequestHandler = async (req, res, next) => {
+export const getUser: RequestHandler = async (req, res, next) => {
   try {
-    //check 'Site Admin' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.SiteAdmin)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    res.render("users/add-user", {
-      pageTitle: "Add User",
-      user: {},
-      path: "users/add-user",
-      editing: false,
-      permissionsTypes: PermissionsTypes.map((permission) => {
-        return { permission: permission, checked: false };
-      }),
-    });
-  } catch (err: any) {
-    next(err);
-  }
-};
-
-export const getEditUserPage: RequestHandler = async (req, res, next) => {
-  try {
-    //check 'Site Admin' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.SiteAdmin)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     const { userId } = req.params;
     const user = await usersFile.getUser(userId);
     if (!user) {
@@ -54,42 +20,13 @@ export const getEditUserPage: RequestHandler = async (req, res, next) => {
       _id: 1,
     });
 
-    //checking user permissions and build permission array, with 'checked' property
-    const editPermissions = PermissionsTypes.map((permission) => {
-      return {
-        permission: permission,
-        checked:
-          permissionsForUser &&
-          permissionsForUser.permissions &&
-          permissionsForUser.permissions.includes(permission),
-      };
+    res.json({
+      user: {
+        ...user,
+        userName: userName?.userName,
+        permissions: permissionsForUser?.permissions,
+      },
     });
-    res.render("users/add-user", {
-      pageTitle: "Edit User",
-      user: { ...user, userName: userName?.userName },
-      path: "users/add-user",
-      editing: true,
-      permissionsTypes: editPermissions,
-    });
-  } catch (err: any) {
-    next(err);
-  }
-};
-
-/* CRUD */
-
-export const getUser: RequestHandler = async (req, res, next) => {
-  try {
-    //check 'Site Admin' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.SiteAdmin)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    const allUsers = await usersFile.getUsers();
-    const { userId } = req.params;
-    const user = allUsers.find((user) => user._id.toString() === userId);
-    res.json(user);
   } catch (err: any) {
     next(err);
   }
@@ -97,12 +34,6 @@ export const getUser: RequestHandler = async (req, res, next) => {
 
 export const getUsers: RequestHandler = async (req, res, next) => {
   try {
-    //check 'Site Admin' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.SiteAdmin)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     //get all users from users.json
     const allJsonUsers = await usersFile.getUsers();
 
@@ -129,11 +60,9 @@ export const getUsers: RequestHandler = async (req, res, next) => {
         userName: userName?.userName,
       };
     }) as UserObject[];
-    res.status(200).render("users/all-users", {
-      pageTitle: "All Users",
+
+    res.status(200).json({
       users: allUsers,
-      path: "/users",
-      editing: false,
     });
   } catch (err: any) {
     next(err);
@@ -142,12 +71,6 @@ export const getUsers: RequestHandler = async (req, res, next) => {
 
 export const postUser: RequestHandler = async (req, res, next) => {
   try {
-    //check 'Site Admin' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.SiteAdmin)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     const inputUser: UserObject = req.body as UserObject;
     //save user to userPassword DB to get _id
     const userPassword = new UserPassword({ userName: inputUser.userName });
@@ -178,12 +101,6 @@ export const postUser: RequestHandler = async (req, res, next) => {
 
 export const deleteUser: RequestHandler = async (req, res, next) => {
   try {
-    //check 'Site Admin' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.SiteAdmin)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     const { userId } = req.params;
 
     //delete user from db
@@ -203,12 +120,6 @@ export const deleteUser: RequestHandler = async (req, res, next) => {
 
 export const putUser: RequestHandler = async (req, res, next) => {
   try {
-    //check 'Site Admin' permission
-    const userPermissions = (req as RequestWithUserPermissions).userPermissions!
-      .permissions;
-    if (!userPermissions.includes(UserPermissions.SiteAdmin)) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     const inputUser: UserObject = req.body as UserObject;
     //change userNmame in db
     await UserPassword.findByIdAndUpdate(inputUser._id, {

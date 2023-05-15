@@ -1,5 +1,10 @@
-import { Types, ObjectId } from "mongoose";
-import { SubscriptionObject } from "../interfaces/mongoose.gen";
+import { Types, ObjectId, PopulatedDoc } from "mongoose";
+import {
+  MemberDocument,
+  SubscriptionDocument,
+  SubscriptionObject,
+} from "../interfaces/mongoose.gen";
+import Member from "../models/membersModel";
 import Movie from "../models/movieModel";
 import Subscription from "../models/subscriptionsModel";
 
@@ -13,23 +18,29 @@ const postSubscription = async (
   date: Date
 ) => {
   try {
-    let subscriptionId: Types.ObjectId;
-    let foundSub = await Subscription.findOne({ memberId: memberId });
-    if (foundSub) {
-      //if there is a subscription for this member
-      foundSub.movies.push({ movieId: movieId, date: date });
-      foundSub.save();
-      subscriptionId = foundSub._id;
-    } else {
-      //if there is no subscription, create new subscription
-      let sub = new Subscription({
-        movies: [{ movieId: movieId, date: date }],
-        memberId: memberId,
-      });
-      await sub.save();
-      subscriptionId = sub._id;
+    // Check if movie exists for this member
+    let subscription: SubscriptionObject | null = await Subscription.findOne({
+      memberId: memberId,
+      "movies.movieId": movieId,
+    });
+    if (subscription) {
+      throw new Error("Subscription to that movie already exists");
     }
+    let updatedSubscription = await Subscription.findOneAndUpdate(
+      { memberId: memberId },
+      { $addToSet: { movies: { movieId: movieId, date: date } } },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    if (!updatedSubscription) {
+      throw new Error("Subscription not found");
+    }
+
+    return {
+      subscription: updatedSubscription,
+    };
   } catch (err: any) {
+    console.log(err);
     throw new Error(err);
   }
 };

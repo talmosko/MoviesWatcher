@@ -1,10 +1,6 @@
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
-import {
-  IUserPassword,
-  UserPassword,
-  UserPasswordDoc,
-} from "../models/userPasswordModel";
+import { UserPassword, UserPasswordDoc } from "../models/userPasswordModel";
 import * as permissionsFile from "../DAL/permissionsFile";
 import * as usersFile from "../DAL/usersFile";
 import bcrypt from "bcryptjs";
@@ -13,23 +9,7 @@ import {
   RequestWithUserPermissions,
   UserObject,
   UserPermissionsObject,
-} from "../types/subscriptionsTypes";
-
-export const getLoginPage: RequestHandler = (req, res, next) => {
-  res.render("auth/login", {
-    pageTitle: "Login",
-    path: "auth/login",
-    login: true,
-  });
-};
-
-export const getSignupPage: RequestHandler = (req, res, next) => {
-  res.render("auth/login", {
-    pageTitle: "Create An Account",
-    path: "auth/login",
-    login: false,
-  });
-};
+} from "../types/objectTypes";
 
 export const postSignup: RequestHandler = async (req, res, next) => {
   try {
@@ -37,7 +17,7 @@ export const postSignup: RequestHandler = async (req, res, next) => {
     const validationRes = validationResult(req);
     if (!validationRes.isEmpty()) {
       return res.status(422).json({
-        errorMessage: validationRes.array()[0].msg,
+        message: validationRes.array()[0].msg,
       });
     }
 
@@ -46,20 +26,17 @@ export const postSignup: RequestHandler = async (req, res, next) => {
     if user exist and have password, leave the password as is and return error
     if user exist and don't have password, create password and return success */
     const { userName, password } = req.body;
+    console.log(req.body);
     const user: UserPasswordDoc | null = await UserPassword.findOne({
       userName: userName,
     });
     if (!user) {
-      return res
-        .status(422)
-        .json({ errorMessage: "Invalid user name or password" });
+      return res.status(422).json({ message: "Invalid user name or password" });
     }
 
     if (user.password && user.password.length > 0) {
       //already have password
-      return res
-        .status(422)
-        .json({ errorMessage: "User already have password" });
+      return res.status(422).json({ message: "User already have password" });
     }
     //create password
     const hashedPassword = await bcrypt.hash(
@@ -79,25 +56,20 @@ export const postLogin: RequestHandler = async (req, res, next) => {
   const validationRes = validationResult(req);
   if (!validationRes.isEmpty()) {
     return res.status(422).json({
-      errorMessage: validationRes.array()[0].msg,
+      message: validationRes.array()[0].msg,
     });
   }
-
   //check user name and password
   const { userName, password } = req.body;
   const user: UserPasswordDoc | null = await UserPassword.findOne({
     userName: userName,
   });
   if (!user) {
-    return res
-      .status(422)
-      .json({ errorMessage: "Invalid user name or password" });
+    return res.status(422).json({ message: "Invalid user name or password" });
   }
-  const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await bcrypt.compare(password, user.password || "");
   if (!isMatch) {
-    return res
-      .status(422)
-      .json({ errorMessage: "Invalid user name or password" });
+    return res.status(422).json({ message: "Invalid user name or password" });
   }
 
   //get user permissions
@@ -119,27 +91,18 @@ export const postLogin: RequestHandler = async (req, res, next) => {
     .cookie("jwt", token, {
       signed: true,
       httpOnly: true,
+      sameSite: "strict",
       maxAge: jsonUser ? jsonUser.sessionTimeout * 60 * 1000 : 3600000,
     })
     .status(200)
-    .json({ message: "Login success" });
-};
-
-//if user is logged in, redirect to home page
-export const getHomePage: RequestHandler = async (req, res, next) => {
-  const requestWithUserPermissions = req as RequestWithUserPermissions;
-  if (requestWithUserPermissions.userPermissions) {
-    //get user name
-    const user = await usersFile.getUser(
-      requestWithUserPermissions.userPermissions._id.toString()
-    );
-
-    return res.render("home", { pageTitle: `Welcome ${user?.firstName}` });
-  }
-  //else - go to login page
-  return next();
+    .json({
+      userId: user._id,
+      sessionTimeout: jsonUser ? jsonUser.sessionTimeout : 60,
+      permissions: userPermissions?.permissions,
+    });
 };
 
 export const postLogout: RequestHandler = (req, res, next) => {
-  res.clearCookie("jwt").redirect("/");
+  console.log("logout");
+  res.clearCookie("jwt").status(200).json({ message: "Logout success" });
 };

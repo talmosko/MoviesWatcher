@@ -5,10 +5,9 @@ import { Request } from "express";
 export type MemberObject = {
   _id: ObjectId;
   externalId?: number;
-  name?: string;
-  email?: string;
-  city?: string;
-  subscriptions?: SubscriptionObject[];
+  name: string;
+  email: string;
+  city: string;
 };
 
 export type MovieObject = {
@@ -18,13 +17,18 @@ export type MovieObject = {
   genres: string[];
   image: string;
   premiered?: Date;
-  subscriptions?: SubscriptionObject[];
+};
+
+export type SubscriptionRequestObject = {
+  memberId: ObjectId;
+  movieId: ObjectId;
+  date: Date;
 };
 
 export type SubscriptionObject = {
-  _id?: ObjectId;
-  memberId?: MemberObject;
-  movies?: [{ movieId: MovieObject; date: Date }];
+  _id: ObjectId;
+  memberId: MemberObject;
+  movies: [{ movieId: MovieObject; date: Date }];
 };
 
 export const PermissionsTypes = [

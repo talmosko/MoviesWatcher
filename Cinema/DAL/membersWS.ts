@@ -1,5 +1,5 @@
 import axios from "axios";
-import { MemberObject } from "../types/subscriptionsTypes";
+import { MemberObject } from "../types/objectTypes";
 import dotenv from "dotenv";
 dotenv.config();
 
